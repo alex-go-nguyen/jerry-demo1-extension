@@ -33,6 +33,8 @@ export function Generator({ isShowHeader = true }) {
 
   const handleCopyPasswordToClipboard = () => {
     navigator.clipboard.writeText(password)
+    chrome.runtime.sendMessage({ action: 'hiddenModalOptions' })
+
   }
 
   const handleGeneratePassword = () => {
@@ -62,7 +64,7 @@ export function Generator({ isShowHeader = true }) {
   }, [passwordSettings])
 
   return (
-    <section>
+    <div>
       {isShowHeader && (
         <Header className='text-left capitalize text-white font-semibold text-xl leading-[64px] bg-[#4096ff] px-3'>
           Password Generator
@@ -113,6 +115,6 @@ export function Generator({ isShowHeader = true }) {
           ))}
         </div>
       </div>
-    </section>
+    </div>
   )
 }

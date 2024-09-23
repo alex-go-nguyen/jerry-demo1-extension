@@ -1,13 +1,12 @@
 import { instance as axiosClient } from '@/config'
-
 import { ILoginInputData } from '@/interfaces'
 
-export const apiLogin = async (userData: ILoginInputData) => {
-  const response = await axiosClient.post('/auth/login', userData)
-  return response
-}
+export const authApi = {
+  login: async (userData: ILoginInputData) => {
+    return await axiosClient.post('/auth/login', userData)
+  },
 
-export const apiLogout = async () => {
-  const response = await axiosClient.post('/auth/logout')
-  return response
+  logout: async () => {
+    return await axiosClient.post('/auth/logout')
+  }
 }

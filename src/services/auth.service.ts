@@ -1,16 +1,18 @@
-import * as authApi from '@/apis'
+import { authApi } from '@/apis'
 
 type loginData = {
   email: string
   password: string
 }
 
-export const loginService = async (loginData: loginData) => {
-  const response = await authApi.apiLogin(loginData)
-  return response.data
-}
+export const authService = {
+  login: async (loginData: loginData) => {
+    const response = await authApi.login(loginData)
+    return response.data
+  },
 
-export const logoutService = async () => {
-  const response = await authApi.apiLogout()
-  return response.data
+  logout: async () => {
+    const response = await authApi.logout()
+    return response.data
+  }
 }
