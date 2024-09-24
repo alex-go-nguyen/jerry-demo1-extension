@@ -5,7 +5,12 @@ export default {
     extend: {
       colors: {
         'primary-800': '#0A2FB6',
-        'primary-500': '#365ff5'
+        'primary-500': '#365ff5',
+        'blue-antd': '#4096ff'
+      },
+      backgroundImage: {
+        'radial-custom':
+          'radial-gradient(100% 100% at 91.87% 0%, rgb(251, 235, 235) 3.29%, rgb(249, 250, 251) 9.64%, rgb(249, 250, 251) 100%)'
       }
     },
     keyframes: {

@@ -3,7 +3,15 @@ export interface ICreateAccountData {
   password: string
   domain: string
 }
+export interface IAccountInputData {
+  id: string
+  username: string
+  password: string
+  domain: string
+}
 
-export interface ICreateAccountProps {
-  setShow: React.Dispatch<React.SetStateAction<boolean>>;
+export interface ICurrentUser {
+  id: string
+  name: string
+  email: string
 }

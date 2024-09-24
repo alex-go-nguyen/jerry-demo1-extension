@@ -4,7 +4,10 @@ import { ICreateAccountData } from '@/interfaces'
 
 export const accountApi = {
   create: async (data: ICreateAccountData) => {
-    const response = await axiosClient.post('accounts/store', data)
-    return response.data
+    return await axiosClient.post('/accounts/store', data)
+  },
+  getListAccounts: async () => {
+    return await axiosClient.get('/accounts')
   }
 }
+

@@ -6,7 +6,7 @@ export interface ILoginInputData {
 export interface IResponseLoginData {
   token: string
   currentUser: {
-    us_id: string
-    us_email: string
+    id: string
+    email: string
   }
 }
