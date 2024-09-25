@@ -1,14 +1,18 @@
 import { useEffect, useState } from 'react'
 
-import { Checkbox, Layout, Slider, Tooltip } from 'antd'
+import { Checkbox, Layout, message, Slider, Tooltip } from 'antd'
 
 import generator from 'generate-password-ts'
 
-import { FaCopy, LuRefreshCw } from '@/utils'
+import { useCopyToClipboard } from '@/hooks'
 
+import { FaCopy, LuRefreshCw } from '@/utils/common'
 import { passwordSettingOptions } from '@/utils/constant'
 
 const { Header } = Layout
+
+type PasswordSettingKeys = 'length' | 'numbers' | 'symbols' | 'lowercase' | 'uppercase'
+type PasswordSettings = Record<PasswordSettingKeys, number | boolean>
 
 const passwordTemp = generator.generate({
   length: 50,
@@ -19,11 +23,12 @@ const passwordTemp = generator.generate({
 })
 
 export function Generator({ isShowHeader = true }) {
+  const [, copy] = useCopyToClipboard()
   const [password, setPassword] = useState<string>(passwordTemp)
 
   const [disablePasswordSetting, setDisablePasswordSetting] = useState<string>('')
 
-  const [passwordSettings, setPasswordSettings] = useState({
+  const [passwordSettings, setPasswordSettings] = useState<PasswordSettings>({
     length: 50,
     numbers: true,
     symbols: true,
@@ -32,21 +37,30 @@ export function Generator({ isShowHeader = true }) {
   })
 
   const handleCopyPasswordToClipboard = () => {
-    navigator.clipboard.writeText(password)
-    chrome.runtime.sendMessage({ action: 'hiddenModalOptions' })
-
+    copy(password)
+      .then(() => {
+        message.success('Copied password')
+      })
+      .catch((error) => {
+        message.success('Copy password failed' + error)
+      })
   }
-
   const handleGeneratePassword = () => {
-    const newPassword = generator.generate(passwordSettings)
+    const { length, numbers, symbols, lowercase, uppercase } = passwordSettings
+    const newPassword = generator.generate({
+      length: length as number,
+      numbers: !!numbers,
+      symbols: !!symbols,
+      lowercase: !!lowercase,
+      uppercase: !!uppercase
+    })
+
     setPassword(newPassword)
   }
 
-  const handleChangePasswordSetting = (key: string, checked: boolean) => {
+  const handleChangePasswordSetting = (key: keyof PasswordSettings, checked: boolean) => {
     const { length, ...updatedSettings } = { ...passwordSettings, [key]: checked }
-
     const activeSettingsCount = Object.values(updatedSettings).filter(Boolean).length
-
     if (activeSettingsCount === 1) {
       setDisablePasswordSetting(
         Object.keys(updatedSettings).find((setting) => updatedSettings[setting as keyof typeof updatedSettings]) || ''
@@ -54,7 +68,6 @@ export function Generator({ isShowHeader = true }) {
     } else {
       setDisablePasswordSetting('')
     }
-
     setPasswordSettings({ length, ...updatedSettings })
   }
 
@@ -95,7 +108,7 @@ export function Generator({ isShowHeader = true }) {
           <Slider
             min={8}
             max={100}
-            defaultValue={passwordSettings.length}
+            defaultValue={passwordSettings.length as number}
             onChange={(value) => setPasswordSettings({ ...passwordSettings, length: value })}
           />
         </div>
@@ -107,8 +120,8 @@ export function Generator({ isShowHeader = true }) {
               key={key}
               disabled={disablePasswordSetting === key}
               className='text-lg text-gray-700 mb-2'
-              checked={!!passwordSettings[key as keyof typeof passwordSettings]}
-              onChange={(e) => handleChangePasswordSetting(key, e.target.checked)}
+              checked={!!passwordSettings[key as keyof PasswordSettings]}
+              onChange={(e) => handleChangePasswordSetting(key as keyof PasswordSettings, e.target.checked)}
             >
               {text}
             </Checkbox>

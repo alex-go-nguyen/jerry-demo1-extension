@@ -6,6 +6,8 @@ import { Layout } from 'antd'
 
 import { BottomTab } from '@/components'
 
+import { localStorageKeys } from '@/utils/constant'
+
 const { Content } = Layout
 
 export const DefaultLayout = () => {
@@ -14,7 +16,7 @@ export const DefaultLayout = () => {
   useEffect(() => {
     const getDataLocal = async () => {
       try {
-        const result = await chrome.storage.local.get(['accessToken'])
+        const result = await chrome.storage.local.get(localStorageKeys.accessToken)
         if (!result['accessToken']) {
           navigate('/login')
         }

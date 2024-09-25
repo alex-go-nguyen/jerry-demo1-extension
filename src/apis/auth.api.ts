@@ -3,10 +3,12 @@ import { ILoginInputData } from '@/interfaces'
 
 export const authApi = {
   login: async (userData: ILoginInputData) => {
-    return await axiosClient.post('/auth/login', userData)
+    const response = await axiosClient.post('/auth/login', userData)
+    return response.data
   },
 
   logout: async () => {
-    return await axiosClient.post('/auth/logout')
+    const response = await axiosClient.post('/auth/logout')
+    return response.data
   }
 }

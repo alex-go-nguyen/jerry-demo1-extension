@@ -9,11 +9,13 @@ import { useForm, Controller } from 'react-hook-form'
 import { Button, Input, Spin, Typography, message } from 'antd'
 import { MailOutlined, LockOutlined } from '@ant-design/icons'
 
-import { authService } from '@/services'
+import { authApi } from '@/apis'
 
 import { useChromeStorage } from '@/hooks'
 
-import { ILoginInputData, IResponseLoginData } from '@/interfaces'
+import { localStorageKeys } from '@/utils/constant'
+
+import { ILoginInputData } from '@/interfaces'
 
 const { Text } = Typography
 
@@ -24,8 +26,9 @@ const schema = yup.object().shape({
 
 export function Login() {
   const navigate = useNavigate()
-  const { setValue: setAccessToken } = useChromeStorage<string>('accessToken')
-  const { setValue: setCurrentUser } = useChromeStorage<object>('currentUser')
+  const { setValue: setAccessToken } = useChromeStorage<string>(localStorageKeys.accessToken)
+  const { setValue: setRefreshToken } = useChromeStorage<string>(localStorageKeys.accessToken)
+  const { setValue: setCurrentUser } = useChromeStorage<object>(localStorageKeys.currentUser)
 
   const {
     control,
@@ -37,13 +40,12 @@ export function Login() {
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: ILoginInputData) => {
-      return await authService.login(data)
+      return await authApi.login(data)
     },
-    onSuccess: (data: IResponseLoginData) => {
-      const { token, currentUser } = data
-
-      setAccessToken(token)
+    onSuccess: ({ accessToken, refreshToken, currentUser }) => {
+      setAccessToken(accessToken)
       setCurrentUser(currentUser)
+      setRefreshToken(refreshToken)
       message.success('Login successful!')
       navigate('/')
     },

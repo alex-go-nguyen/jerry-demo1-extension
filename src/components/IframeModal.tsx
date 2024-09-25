@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 
+import { useBoolean } from '@/hooks'
+
 import { Generator } from '@/pages/client'
 
 import {
@@ -12,14 +14,12 @@ import {
   LuArrowUpRight,
   IoSettingsSharp,
   IoIosAddCircle
-} from '@/utils'
+} from '@/utils/common'
 
 export function IframeModal() {
-  const [isHovered, setIsHovered] = useState(false)
-
-  const [showMoreOptions, setShowMoreOptions] = useState(false)
-
-  const [showModalGeneratePassword, setShowModalGeneratePassword] = useState(false)
+  const { value: isHovered, toggle: setIsHovered } = useBoolean(false)
+  const { value: showMoreOptions, toggle: setShowMoreOptions } = useBoolean(false)
+  const { value: showModalGeneratePassword, setFalse, toggle: setShowModalGeneratePassword } = useBoolean(false)
 
   const [currentUrl, setCurrentUrl] = useState('')
 
@@ -40,25 +40,25 @@ export function IframeModal() {
       console.log(currentUrl)
     })
   }, [])
-
+  
   const handleToggleOptions = () => {
     if (showModalGeneratePassword) {
-      setShowModalGeneratePassword(false)
+      setFalse()
       chrome.runtime.sendMessage({ action: 'showMoreOptions' })
     } else {
-      setShowMoreOptions((prev) => {
-        if (prev) {
-          chrome.runtime.sendMessage({ action: 'noShowMoreOptions' })
-        } else {
-          chrome.runtime.sendMessage({ action: 'showMoreOptions' })
-        }
-        return !prev
-      })
+      if(showMoreOptions){
+        chrome.runtime.sendMessage({ action: 'noShowMoreOptions' })
+      }
+      else {
+        chrome.runtime.sendMessage({ action: 'showMoreOptions' })
+
+      }
+      setShowMoreOptions()
     }
   }
 
   const handleToggleGeneratePassword = () => {
-    setShowModalGeneratePassword((prev) => !prev)
+    setShowModalGeneratePassword()
     chrome.runtime.sendMessage({ action: 'showModalGeneratePassword' })
   }
 
@@ -81,7 +81,7 @@ export function IframeModal() {
             <IoIosArrowBack className='text-2xl' />
             <p className='ml-2'>Back</p>
           </div>
-          <div className=''>
+          <div>
             {showModalGeneratePassword ? (
               <Generator isShowHeader={false} />
             ) : (
@@ -92,7 +92,7 @@ export function IframeModal() {
                 >
                   <div className='flex items-center text-gray-700'>
                     <BiSolidKey className='text-xl' />
-                    <p className='text-lg ml-2'>Generate a password</p>
+                    <span className='text-lg ml-2'>Generate a password</span>
                   </div>
                   <IoIosArrowForward className='text-xl' />
                 </div>
@@ -100,7 +100,7 @@ export function IframeModal() {
                 <div className='flex justify-between items-center hover:bg-blue-200 transition cursor-pointer px-4 py-2'>
                   <div className='flex items-center text-gray-700'>
                     <FaVault className='text-xl' />
-                    <p className='text-lg ml-2'>Open my vault</p>
+                    <span className='text-lg ml-2'>Open my vault</span>
                   </div>
                   <LuArrowUpRight className='text-xl' />
                 </div>
@@ -108,7 +108,7 @@ export function IframeModal() {
                 <div className='flex justify-between items-center hover:bg-blue-200 transition cursor-pointer px-4 py-2'>
                   <div className='flex items-center text-gray-700'>
                     <IoSettingsSharp className='text-xl' />
-                    <p className='text-lg ml-2'>Settings</p>
+                    <span className='text-lg ml-2'>Settings</span>
                   </div>
                   <LuArrowUpRight className='text-xl' />
                 </div>
@@ -121,8 +121,8 @@ export function IframeModal() {
           <div
             id='header-modal'
             className='flex justify-between items-center border-b border-b-gray-300 transition hover:bg-blue-200 hover:cursor-pointer'
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
+            onMouseEnter={() => setIsHovered()}
+            onMouseLeave={() => setIsHovered()}
             onClick={handleToggleShowFormCreateAccountOrFillForm}
           >
             <div className='flex items-center p-2'>
@@ -130,14 +130,14 @@ export function IframeModal() {
                 <AiFillLock className='text-primary-800 text-3xl align-middle' />
               </div>
               <div className='relative'>
-                <p
+                <div
                   className={`transition-all duration-500 ${
                     isHovered ? 'opacity-0 transform translate-y-2' : 'opacity-100'
                   }`}
                 >
                   {currentUrl}
-                </p>
-                <p
+                </div>
+                <div
                   className={`absolute top-0 left-0 transition-all duration-500 text-lg ${
                     isHovered
                       ? 'opacity-100 transform translate-y-0 text-primary-800 font-semibold'
@@ -145,9 +145,10 @@ export function IframeModal() {
                   }`}
                   id='status-can-add-account'
                 >
-                  {listAccounts.length > 0 ? 'Fill' : 'Add'}
-                </p>
-                <p className='text-lg'> {listAccounts.length > 0 ? listAccounts[0]['username'] : 'Start typing'}</p>
+                   {listAccounts.length > 0 ? 'Fill' : 'Add'}
+                </div>
+                <div className='text-lg'> {listAccounts.length > 0 ? listAccounts[0]['username'] : 'Start typing'}</div>
+
               </div>
             </div>
             <div className='mr-2 p-2 hover:bg-blue-200 transition'>
@@ -158,9 +159,9 @@ export function IframeModal() {
               )}
             </div>
           </div>
-          <p className='text-lg p-4 cursor-pointer transition hover:bg-blue-200' onClick={handleToggleOptions}>
+          <div className='text-lg p-4 cursor-pointer transition hover:bg-blue-200' onClick={handleToggleOptions}>
             More options...
-          </p>
+          </div>
         </>
       )}
     </section>
