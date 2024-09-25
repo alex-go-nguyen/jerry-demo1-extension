@@ -9,9 +9,9 @@ import { useForm, Controller } from 'react-hook-form'
 import { Button, Input, Spin, Typography, message } from 'antd'
 import { MailOutlined, LockOutlined, GlobalOutlined } from '@ant-design/icons'
 
-import { IoMdClose } from '@/utils'
+import { IoMdClose } from '@/utils/common'
 
-import { accountService } from '@/services'
+import { accountApi } from '@/apis'
 
 import { ICreateAccountData } from '@/interfaces'
 
@@ -65,7 +65,7 @@ export function CreateAccount() {
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: ICreateAccountData) => {
-      return await accountService.create(data)
+      return await accountApi.create(data)
     },
     onSuccess: () => {
       reset()

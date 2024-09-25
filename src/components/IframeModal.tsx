@@ -21,7 +21,7 @@ export function IframeModal() {
   const { value: showMoreOptions, toggle: setShowMoreOptions } = useBoolean(false)
   const { value: showModalGeneratePassword, setFalse, toggle: setShowModalGeneratePassword } = useBoolean(false)
 
-  const [currentUrl, setCurrentUrl] = useState('')
+  const [currentUrl, setCurrentUrl] = useState('kkk')
 
   const [listAccounts] = useState([
     // {
@@ -40,18 +40,16 @@ export function IframeModal() {
       console.log(currentUrl)
     })
   }, [])
-  
+
   const handleToggleOptions = () => {
     if (showModalGeneratePassword) {
       setFalse()
       chrome.runtime.sendMessage({ action: 'showMoreOptions' })
     } else {
-      if(showMoreOptions){
+      if (showMoreOptions) {
         chrome.runtime.sendMessage({ action: 'noShowMoreOptions' })
-      }
-      else {
+      } else {
         chrome.runtime.sendMessage({ action: 'showMoreOptions' })
-
       }
       setShowMoreOptions()
     }
@@ -145,10 +143,9 @@ export function IframeModal() {
                   }`}
                   id='status-can-add-account'
                 >
-                   {listAccounts.length > 0 ? 'Fill' : 'Add'}
+                  {listAccounts.length > 0 ? 'Fill' : 'Add'}
                 </div>
                 <div className='text-lg'> {listAccounts.length > 0 ? listAccounts[0]['username'] : 'Start typing'}</div>
-
               </div>
             </div>
             <div className='mr-2 p-2 hover:bg-blue-200 transition'>
