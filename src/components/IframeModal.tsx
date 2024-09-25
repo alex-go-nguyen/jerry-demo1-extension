@@ -12,19 +12,19 @@ import {
 } from '@/utils/common'
 
 export function IframeModal() {
-  const { value: isHovered, setValue: setIsHovered } = useBoolean(false)
-  const { value: showMoreOptions, setValue: setShowMoreOptions } = useBoolean(false)
-  const { value: showModalGeneratePassword, setValue: setShowModalGeneratePassword } = useBoolean(false)
+  const { value: isHovered, toggle: setIsHovered } = useBoolean(false)
+  const { value: showMoreOptions, toggle: setShowMoreOptions } = useBoolean(false)
+  const { value: showModalGeneratePassword, setFalse, toggle: setShowModalGeneratePassword } = useBoolean(false)
   const handleToggleOptions = () => {
     if (showModalGeneratePassword) {
-      setShowModalGeneratePassword(false)
+      setFalse()
     } else {
-      setShowMoreOptions((prev) => !prev)
+      setShowMoreOptions()
     }
   }
 
   const handleToggleGeneratePassword = () => {
-    setShowModalGeneratePassword((prev) => !prev)
+    setShowModalGeneratePassword()
   }
   return (
     <section className='w-[280px]'>
@@ -76,8 +76,8 @@ export function IframeModal() {
         <>
           <div
             className='flex justify-between items-center border-b border-b-gray-300 transition hover:bg-blue-200 hover:cursor-pointer'
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
+            onMouseEnter={() => setIsHovered()}
+            onMouseLeave={() => setIsHovered()}
           >
             <div className='flex items-center p-2'>
               <div className='mr-3 cursor-pointer p-1 rounded-sm'>

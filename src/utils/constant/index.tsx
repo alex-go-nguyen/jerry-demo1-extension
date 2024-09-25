@@ -3,22 +3,22 @@ import { IoHome, TbShieldLockFilled, IoNotifications, FaUserAlt } from '@/utils/
 export const bottomTabList = [
   {
     title: 'Home',
-    icon: <IoHome/>,
+    icon: <IoHome />,
     to: '/'
   },
   {
     title: 'Generator',
-    icon: <TbShieldLockFilled/>,
+    icon: <TbShieldLockFilled />,
     to: '/generator'
   },
   {
     title: 'Alerts',
-    icon: <IoNotifications/>,
+    icon: <IoNotifications />,
     to: '/alert'
   },
   {
     title: 'Account',
-    icon: <FaUserAlt/>,
+    icon: <FaUserAlt />,
     to: '/account'
   }
 ]
@@ -41,3 +41,9 @@ export const passwordSettingOptions = [
     text: 'Symbols ($#*)'
   }
 ]
+
+export const localStorageKeys = {
+  accessToken: 'accessToken',
+  refreshToken: 'refreshToken',
+  currentUser: 'currentUser'
+}

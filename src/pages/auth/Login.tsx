@@ -13,7 +13,9 @@ import { authApi } from '@/apis'
 
 import { useChromeStorage } from '@/hooks'
 
-import { ILoginInputData, IResponseLoginData } from '@/interfaces'
+import { localStorageKeys } from '@/utils/constant'
+
+import { ILoginInputData } from '@/interfaces'
 
 const { Text } = Typography
 
@@ -24,8 +26,9 @@ const schema = yup.object().shape({
 
 export function Login() {
   const navigate = useNavigate()
-  const { setValue: setAccessToken } = useChromeStorage<string>('accessToken')
-  const { setValue: setCurrentUser } = useChromeStorage<object>('currentUser')
+  const { setValue: setAccessToken } = useChromeStorage<string>(localStorageKeys.accessToken)
+  const { setValue: setRefreshToken } = useChromeStorage<string>(localStorageKeys.accessToken)
+  const { setValue: setCurrentUser } = useChromeStorage<object>(localStorageKeys.currentUser)
 
   const {
     control,
@@ -39,20 +42,15 @@ export function Login() {
     mutationFn: async (data: ILoginInputData) => {
       return await authApi.login(data)
     },
-    onSuccess: (data: IResponseLoginData) => {
-      const { token, currentUser } = data
-
-      setAccessToken(token)
-
+    onSuccess: ({ accessToken, refreshToken, currentUser }) => {
+      setAccessToken(accessToken)
       setCurrentUser(currentUser)
-
+      setRefreshToken(refreshToken)
       message.success('Login successful!')
-
       navigate('/')
     },
     onError: (e) => {
-      console.log(e)
-      message.error('Login failed. Please try again!')
+      message.error('Login failed. Please try again!' + e)
     }
   })
 
