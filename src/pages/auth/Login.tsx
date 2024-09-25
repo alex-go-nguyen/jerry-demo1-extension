@@ -9,7 +9,7 @@ import { useForm, Controller } from 'react-hook-form'
 import { Button, Input, Spin, Typography, message } from 'antd'
 import { MailOutlined, LockOutlined } from '@ant-design/icons'
 
-import { loginService } from '@/services'
+import { authApi } from '@/apis'
 
 import { useChromeStorage } from '@/hooks'
 
@@ -37,7 +37,7 @@ export function Login() {
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: ILoginInputData) => {
-      return await loginService(data)
+      return await authApi.login(data)
     },
     onSuccess: (data: IResponseLoginData) => {
       const { token, currentUser } = data

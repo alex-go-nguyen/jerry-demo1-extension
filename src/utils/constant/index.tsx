@@ -1,24 +1,24 @@
-import { IoHome, TbShieldLockFilled, IoNotifications, FaUserAlt } from '@/utils'
+import { IoHome, TbShieldLockFilled, IoNotifications, FaUserAlt } from '@/utils/common'
 
 export const bottomTabList = [
   {
     title: 'Home',
-    Icon: IoHome,
+    icon: <IoHome/>,
     to: '/'
   },
   {
     title: 'Generator',
-    Icon: TbShieldLockFilled,
+    icon: <TbShieldLockFilled/>,
     to: '/generator'
   },
   {
     title: 'Alerts',
-    Icon: IoNotifications,
+    icon: <IoNotifications/>,
     to: '/alert'
   },
   {
     title: 'Account',
-    Icon: FaUserAlt,
+    icon: <FaUserAlt/>,
     to: '/account'
   }
 ]

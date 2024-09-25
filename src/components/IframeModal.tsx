@@ -1,3 +1,4 @@
+import { useBoolean } from '@/hooks'
 import { Generator } from '@/pages/client'
 import {
   AiFillLock,
@@ -8,13 +9,12 @@ import {
   FaVault,
   LuArrowUpRight,
   IoSettingsSharp
-} from '@/utils'
-import { useState } from 'react'
+} from '@/utils/common'
 
 export function IframeModal() {
-  const [isHovered, setIsHovered] = useState(false)
-  const [showMoreOptions, setShowMoreOptions] = useState(false)
-  const [showModalGeneratePassword, setShowModalGeneratePassword] = useState(false)
+  const { value: isHovered, setValue: setIsHovered } = useBoolean(false)
+  const { value: showMoreOptions, setValue: setShowMoreOptions } = useBoolean(false)
+  const { value: showModalGeneratePassword, setValue: setShowModalGeneratePassword } = useBoolean(false)
   const handleToggleOptions = () => {
     if (showModalGeneratePassword) {
       setShowModalGeneratePassword(false)
@@ -37,7 +37,7 @@ export function IframeModal() {
             <IoIosArrowBack className='text-2xl' />
             <p className='ml-2'>Back</p>
           </div>
-          <div className=''>
+          <div>
             {showModalGeneratePassword ? (
               <Generator isShowHeader={false} />
             ) : (
@@ -48,7 +48,7 @@ export function IframeModal() {
                 >
                   <div className='flex items-center text-gray-700'>
                     <BiSolidKey className='text-xl' />
-                    <p className='ml-2'>Generate a password</p>
+                    <span className='ml-2'>Generate a password</span>
                   </div>
                   <IoIosArrowForward className='text-xl' />
                 </div>
@@ -56,7 +56,7 @@ export function IframeModal() {
                 <div className='flex justify-between items-center hover:bg-blue-200 transition cursor-pointer px-4 py-2'>
                   <div className='flex items-center text-gray-700'>
                     <FaVault className='text-xl' />
-                    <p className='ml-2'>Open my vault</p>
+                    <span className='ml-2'>Open my vault</span>
                   </div>
                   <LuArrowUpRight className='text-xl' />
                 </div>
@@ -64,7 +64,7 @@ export function IframeModal() {
                 <div className='flex justify-between items-center hover:bg-blue-200 transition cursor-pointer px-4 py-2'>
                   <div className='flex items-center text-gray-700'>
                     <IoSettingsSharp className='text-xl' />
-                    <p className='ml-2'>Open my vault</p>
+                    <span className='ml-2'>Settings</span>
                   </div>
                   <LuArrowUpRight className='text-xl' />
                 </div>
@@ -84,14 +84,14 @@ export function IframeModal() {
                 <AiFillLock className='text-primary-800 text-3xl align-middle' />
               </div>
               <div className='relative'>
-                <p
+                <div
                   className={`transition-all duration-500 ${
                     isHovered ? 'opacity-0 transform translate-y-2' : 'opacity-100'
                   }`}
                 >
                   21521864z
-                </p>
-                <p
+                </div>
+                <div
                   className={`absolute top-0 left-0 transition-all duration-500 ${
                     isHovered
                       ? 'opacity-100 transform translate-y-0 text-primary-800 font-semibold'
@@ -99,17 +99,17 @@ export function IframeModal() {
                   }`}
                 >
                   Fill
-                </p>
-                <p>21521864</p>
+                </div>
+                <div>21521864</div>
               </div>
             </div>
             <div className='mr-2 p-2 hover:bg-blue-200 transition'>
               <HiPencilSquare className='text-primary-800 text-2xl cursor-pointer' />
             </div>
           </div>
-          <p className='p-4 cursor-pointer transition hover:bg-blue-200' onClick={handleToggleOptions}>
+          <div className='p-4 cursor-pointer transition hover:bg-blue-200' onClick={handleToggleOptions}>
             More options...
-          </p>
+          </div>
         </>
       )}
     </section>
