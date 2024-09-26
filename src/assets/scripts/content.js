@@ -7,7 +7,6 @@ window.addEventListener('load', function () {
     return element
   }
 
-  // Tạo root và shadow root
   const goPassRoot = createElement(
     'div',
     'go-pass-root',
@@ -22,7 +21,6 @@ window.addEventListener('load', function () {
   )
   const goPassShadowRoot = goPassRoot.attachShadow({ mode: 'open' })
 
-  // Modal chứa iframe
   const modalDiv = createElement(
     'div',
     'go-pass-modal-container',
@@ -54,7 +52,6 @@ window.addEventListener('load', function () {
   modalIframe.src = chrome.runtime.getURL('index.html#/webclient-infield')
   modalIframe.allow = 'clipboard-write'
 
-  // Form chứa iframe
   const formSaveAccount = createElement(
     'iframe',
     'go-pass-form-save-account',
@@ -74,8 +71,7 @@ window.addEventListener('load', function () {
   )
   formSaveAccount.src = chrome.runtime.getURL('index.html#/create-account')
 
-  // Hàm chính vị trí icon
-  const positionIcon = (icon, passwordField) => {
+  const handleIconPosition = (icon, passwordField) => {
     const rect = passwordField.getBoundingClientRect()
     const computedStyles = window.getComputedStyle(passwordField)
     const iconWidth = 22,
@@ -91,7 +87,6 @@ window.addEventListener('load', function () {
     icon.style.left = `${left}px`
   }
 
-  // Xử lý các trường password
   document.querySelectorAll('form input[type="password"]').forEach((passwordField) => {
     const goPassIconRoot = createElement(
       'div',
@@ -130,12 +125,9 @@ window.addEventListener('load', function () {
         }
       })
     })
-
-    positionIcon(icon, passwordField)
-    window.addEventListener('resize', () => positionIcon(icon, passwordField))
+    window.addEventListener('resize', () => handleIconPosition(icon, passwordField))
   })
 
-  // Hàm xử lý message
   const updateIframeDisplay = (action, display) => {
     const iframe = document.getElementById('go-pass-root').shadowRoot.getElementById(action)
     if (iframe) {

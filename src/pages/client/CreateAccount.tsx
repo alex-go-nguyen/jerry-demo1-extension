@@ -17,19 +17,14 @@ import { ICreateAccountData } from '@/interfaces'
 
 const { Text } = Typography
 
+const createAccountSchema = yup.object().shape({
+  username: yup.string().required('Please input your username!'),
+  password: yup.string().min(8, 'Password needs to be at least 8 characters.').required('Please input your password!'),
+  domain: yup.string().required('Please input domain name!').default('')
+})
+
 export function CreateAccount() {
   const [currentDomain, setCurrentDomain] = useState('')
-
-  const [schema, setSchema] = useState(
-    yup.object().shape({
-      username: yup.string().required('Please input your username!'),
-      password: yup
-        .string()
-        .min(8, 'Password needs to be at least 8 characters.')
-        .required('Please input your password!'),
-      domain: yup.string().required('Please input domain name!').default(currentDomain)
-    })
-  )
 
   useEffect(() => {
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -37,36 +32,25 @@ export function CreateAccount() {
       if (currentUrl) {
         setCurrentDomain(currentUrl)
       }
-      console.log(currentUrl)
     })
   }, [])
-
-  useEffect(() => {
-    const newSchema = yup.object().shape({
-      username: yup.string().required('Please input your username!'),
-      password: yup
-        .string()
-        .min(8, 'Password needs to be at least 8 characters.')
-        .required('Please input your password!'),
-      domain: yup.string().required('Please input domain name!').default(currentDomain)
-    })
-
-    setSchema(newSchema)
-  }, [currentDomain])
 
   const {
     control,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors }
   } = useForm({
-    resolver: yupResolver(schema)
+    resolver: yupResolver(createAccountSchema)
   })
 
+  useEffect(() => {
+    setValue('domain', currentDomain)
+  }, [currentDomain, setValue])
+
   const { mutate, isPending } = useMutation({
-    mutationFn: async (data: ICreateAccountData) => {
-      return await accountApi.create(data)
-    },
+    mutationFn: accountApi.create,
     onSuccess: () => {
       reset()
       message.success('Save account successful!')
@@ -80,18 +64,11 @@ export function CreateAccount() {
   })
 
   const handleSaveAccount = (data: ICreateAccountData) => {
-    console.log(data)
     mutate(data)
   }
 
   const handleCloseForm = () => {
-    chrome.runtime.sendMessage({ action: 'closeForm' }, (response) => {
-      if (response && response.status === 'success') {
-        console.log('Form closed successfully')
-      } else {
-        console.error('Failed to closed form:', response?.message || 'No response received')
-      }
-    })
+    chrome.runtime.sendMessage({ action: 'closeForm' })
   }
 
   return (
