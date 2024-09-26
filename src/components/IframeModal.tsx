@@ -4,32 +4,18 @@ import { useBoolean } from '@/hooks'
 
 import { Generator } from '@/pages/client'
 
-import {
-  AiFillLock,
-  HiPencilSquare,
-  IoIosArrowBack,
-  BiSolidKey,
-  IoIosArrowForward,
-  FaVault,
-  LuArrowUpRight,
-  IoSettingsSharp,
-  IoIosAddCircle
-} from '@/utils/common'
+import { AiFillLock, HiPencilSquare, IoIosArrowBack, IoIosAddCircle } from '@/utils/common'
+
+import { listMoreOptions } from '@/utils/constant'
 
 export function IframeModal() {
-  const { value: isHovered, toggle: setIsHovered } = useBoolean(false)
-  const { value: showMoreOptions, toggle: setShowMoreOptions } = useBoolean(false)
-  const { value: showModalGeneratePassword, setFalse, toggle: setShowModalGeneratePassword } = useBoolean(false)
+  const { value: isHovered, toggle: toggleHovered } = useBoolean(false)
+  const { value: showMoreOptions, toggle: toggleMoreOptions } = useBoolean(false)
+  const { value: showModalGeneratePassword, setFalse, toggle: toggleModalGeneratePassword } = useBoolean(false)
 
   const [currentUrl, setCurrentUrl] = useState('kkk')
 
-  const [listAccounts] = useState([
-    // {
-    //   ac_id: '1',
-    //   username: 'hihi',
-    //   password: 'hihi'
-    // }
-  ])
+  const [listAccounts] = useState([])
 
   useEffect(() => {
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -37,7 +23,6 @@ export function IframeModal() {
       if (currentUrl) {
         setCurrentUrl(currentUrl)
       }
-      console.log(currentUrl)
     })
   }, [])
 
@@ -51,19 +36,17 @@ export function IframeModal() {
       } else {
         chrome.runtime.sendMessage({ action: 'showMoreOptions' })
       }
-      setShowMoreOptions()
+      toggleMoreOptions()
     }
   }
 
   const handleToggleGeneratePassword = () => {
-    setShowModalGeneratePassword()
+    toggleModalGeneratePassword()
     chrome.runtime.sendMessage({ action: 'showModalGeneratePassword' })
   }
 
   const handleToggleShowFormCreateAccountOrFillForm = () => {
-    if (listAccounts.length > 0) {
-      console.log('Fill')
-    } else {
+    if (listAccounts.length === 0) {
       chrome.runtime.sendMessage({ action: 'openForm' })
     }
   }
@@ -84,32 +67,19 @@ export function IframeModal() {
               <Generator isShowHeader={false} />
             ) : (
               <>
-                <div
-                  className='flex justify-between items-center hover:bg-blue-200 transition cursor-pointer px-4 py-2'
-                  onClick={handleToggleGeneratePassword}
-                >
-                  <div className='flex items-center text-gray-700'>
-                    <BiSolidKey className='text-xl' />
-                    <span className='text-lg ml-2'>Generate a password</span>
+                {listMoreOptions.map((option) => (
+                  <div
+                    key={option.key}
+                    className='flex justify-between items-center hover:bg-blue-200 transition cursor-pointer px-4 py-2'
+                    onClick={option.key === 'generate' ? handleToggleGeneratePassword : () => {}}
+                  >
+                    <div className='flex items-center text-gray-700'>
+                      <span className='text-xl'>{option.iconLeft}</span>
+                      <span className='text-lg ml-2'>{option.text}</span>
+                    </div>
+                    <span className='text-xl'>{option.iconRight}</span>
                   </div>
-                  <IoIosArrowForward className='text-xl' />
-                </div>
-
-                <div className='flex justify-between items-center hover:bg-blue-200 transition cursor-pointer px-4 py-2'>
-                  <div className='flex items-center text-gray-700'>
-                    <FaVault className='text-xl' />
-                    <span className='text-lg ml-2'>Open my vault</span>
-                  </div>
-                  <LuArrowUpRight className='text-xl' />
-                </div>
-
-                <div className='flex justify-between items-center hover:bg-blue-200 transition cursor-pointer px-4 py-2'>
-                  <div className='flex items-center text-gray-700'>
-                    <IoSettingsSharp className='text-xl' />
-                    <span className='text-lg ml-2'>Settings</span>
-                  </div>
-                  <LuArrowUpRight className='text-xl' />
-                </div>
+                ))}
               </>
             )}
           </div>
@@ -119,8 +89,8 @@ export function IframeModal() {
           <div
             id='header-modal'
             className='flex justify-between items-center border-b border-b-gray-300 transition hover:bg-blue-200 hover:cursor-pointer'
-            onMouseEnter={() => setIsHovered()}
-            onMouseLeave={() => setIsHovered()}
+            onMouseEnter={() => toggleHovered()}
+            onMouseLeave={() => toggleHovered()}
             onClick={handleToggleShowFormCreateAccountOrFillForm}
           >
             <div className='flex items-center p-2'>
