@@ -14,6 +14,13 @@ import { FaVault } from 'react-icons/fa6'
 import { IoSettingsSharp } from 'react-icons/io5'
 import { IoIosAddCircle } from 'react-icons/io'
 import { IoMdClose } from 'react-icons/io'
+import { LuMoreHorizontal } from 'react-icons/lu'
+import { TfiMoreAlt } from 'react-icons/tfi'
+import { GrEdit } from 'react-icons/gr'
+import { TbTrash } from 'react-icons/tb'
+import { IoLogOut } from 'react-icons/io5'
+import { FaLanguage } from 'react-icons/fa6'
+import { TbVersionsFilled } from 'react-icons/tb'
 export {
   IoHome,
   TbShieldLockFilled,
@@ -30,5 +37,12 @@ export {
   FaVault,
   IoSettingsSharp,
   IoIosAddCircle,
-  IoMdClose
+  IoMdClose,
+  LuMoreHorizontal,
+  TfiMoreAlt,
+  GrEdit,
+  TbTrash,
+  IoLogOut,
+  FaLanguage,
+  TbVersionsFilled
 }

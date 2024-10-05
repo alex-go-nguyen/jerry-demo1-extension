@@ -1,21 +1,34 @@
 import { useEffect, useState } from 'react'
 
+import { useQuery } from '@tanstack/react-query'
+
 import { useBoolean } from '@/hooks'
 
 import { Generator } from '@/pages/client'
 
-import { AiFillLock, HiPencilSquare, IoIosArrowBack, IoIosAddCircle } from '@/utils/common'
+import { accountService } from '@/services'
+
+import { IAccountInputData } from '@/interfaces'
+
+import { AiFillLock, HiPencilSquare, IoIosArrowBack, IoIosAddCircle, decryptPassword } from '@/utils/common'
 
 import { listMoreOptions } from '@/utils/constant'
 
 export function IframeModal() {
+  const { data: listAccounts } = useQuery({
+    queryKey: ['accounts'],
+    queryFn: async () => {
+      return await accountService.getListAccounts()
+    }
+  })
+
   const { value: isHovered, toggle: toggleHovered } = useBoolean(false)
   const { value: showMoreOptions, toggle: toggleMoreOptions } = useBoolean(false)
   const { value: showModalGeneratePassword, setFalse, toggle: toggleModalGeneratePassword } = useBoolean(false)
 
-  const [currentUrl, setCurrentUrl] = useState('kkk')
+  const [currentUrl, setCurrentUrl] = useState('')
 
-  const [listAccounts] = useState([])
+  const [listSuggestAccounts, setListSuggestAccounts] = useState<IAccountInputData[]>([])
 
   useEffect(() => {
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -25,6 +38,13 @@ export function IframeModal() {
       }
     })
   }, [])
+
+  useEffect(() => {
+    const listSuggestAccounts = listAccounts?.filter((account: IAccountInputData) =>
+      account.domain.includes(currentUrl)
+    )
+    setListSuggestAccounts(listSuggestAccounts)
+  }, [currentUrl, listAccounts])
 
   const handleToggleOptions = () => {
     if (showModalGeneratePassword) {
@@ -46,7 +66,14 @@ export function IframeModal() {
   }
 
   const handleToggleShowFormCreateAccountOrFillForm = () => {
-    if (listAccounts.length === 0) {
+    if (listSuggestAccounts?.length > 0) {
+      const accountToFill = listSuggestAccounts[0]
+      chrome.runtime.sendMessage({
+        action: 'fillForm',
+        username: accountToFill.username,
+        password: decryptPassword(accountToFill.password)
+      })
+    } else {
       chrome.runtime.sendMessage({ action: 'openForm' })
     }
   }
@@ -119,7 +146,7 @@ export function IframeModal() {
               </div>
             </div>
             <div className='mr-2 p-2 hover:bg-blue-200 transition'>
-              {listAccounts.length > 0 ? (
+              {listSuggestAccounts?.length > 0 ? (
                 <HiPencilSquare className='text-primary-800 text-2xl cursor-pointer' />
               ) : (
                 <IoIosAddCircle className='text-primary-800 text-2xl cursor-pointer' />

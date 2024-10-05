@@ -17,7 +17,7 @@ export const DefaultLayout = () => {
     const getDataLocal = async () => {
       try {
         const result = await chrome.storage.local.get(localStorageKeys.accessToken)
-        if (!result['accessToken']) {
+        if (!result[localStorageKeys.accessToken]) {
           navigate('/login')
         }
       } catch (error) {
@@ -31,7 +31,7 @@ export const DefaultLayout = () => {
 
   return (
     <Layout className='w-[375px] h-[600px] max-w-full overflow-hidden border border-gray-800'>
-      <Content className='text-center min-h-[120px] text-white bg-white'>
+      <Content className='text-center min-h-[120px] text-white bg-white overflow-y-auto'>
         <Outlet />
       </Content>
       <BottomTab />

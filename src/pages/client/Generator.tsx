@@ -79,7 +79,7 @@ export function Generator({ isShowHeader = true }) {
   return (
     <div>
       {isShowHeader && (
-        <Header className='text-left capitalize text-white font-semibold text-xl leading-[64px] bg-[#4096ff] px-3'>
+        <Header className='text-left capitalize text-white font-semibold text-xl leading-[64px] bg-blue-antd px-3'>
           Password Generator
         </Header>
       )}

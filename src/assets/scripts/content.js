@@ -171,3 +171,20 @@ window.addEventListener('load', function () {
     return true
   })
 })
+
+
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === 'fillForm') {
+    const { username, password } = message
+    const passwordField = document.querySelector('form input[type="password"]')
+    const usernameField = document
+      .querySelector('form input[type="password"]')
+      .closest('form')
+      .querySelector('input[type="text"]')
+    usernameField.value = username
+    passwordField.value = password
+  }
+  sendResponse({ status: 'success' })
+  return true
+})
