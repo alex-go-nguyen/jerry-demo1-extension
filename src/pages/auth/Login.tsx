@@ -50,7 +50,7 @@ export function Login() {
       navigate('/')
     },
     onError: (e) => {
-      message.error('Login failed. Please try again!' + e)
+      message.error('Login failed!' + e.message)
     }
   })
 

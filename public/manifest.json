@@ -6,7 +6,7 @@
   "action": {
     "default_popup": "index.html"
   },
-  "permissions": ["activeTab", "storage"],
+  "permissions": ["tabs", "scripting", "activeTab", "storage", "clipboardRead", "clipboardWrite"],
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self';"
   },

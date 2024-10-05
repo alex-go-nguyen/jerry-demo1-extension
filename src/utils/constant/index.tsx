@@ -1,4 +1,14 @@
-import { IoHome, TbShieldLockFilled, IoNotifications, FaUserAlt } from '@/utils/common'
+import {
+  IoHome,
+  TbShieldLockFilled,
+  IoNotifications,
+  FaUserAlt,
+  BiSolidKey,
+  IoIosArrowForward,
+  FaVault,
+  LuArrowUpRight,
+  IoSettingsSharp
+} from '@/utils/common'
 
 export const bottomTabList = [
   {
@@ -20,6 +30,27 @@ export const bottomTabList = [
     title: 'Account',
     icon: <FaUserAlt />,
     to: '/account'
+  }
+]
+
+export const listMoreOptions = [
+  {
+    key: 'generate',
+    text: 'Generate a password',
+    iconLeft: <BiSolidKey />,
+    iconRight: <IoIosArrowForward />
+  },
+  {
+    key: 'open',
+    text: 'Open my vault',
+    iconLeft: <FaVault />,
+    iconRight: <LuArrowUpRight />
+  },
+  {
+    key: 'setting',
+    text: 'Settings',
+    iconLeft: <IoSettingsSharp />,
+    iconRight: <LuArrowUpRight />
   }
 ]
 

@@ -1,5 +1,4 @@
 import { instance as axiosClient } from '@/config'
-
 import { ILoginInputData } from '@/interfaces'
 
 export const authApi = {

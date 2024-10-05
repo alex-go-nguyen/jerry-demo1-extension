@@ -11,7 +11,9 @@ import { BiSolidKey } from 'react-icons/bi'
 import { IoIosArrowForward } from 'react-icons/io'
 import { LuArrowUpRight } from 'react-icons/lu'
 import { FaVault } from 'react-icons/fa6'
-import { IoSettingsSharp } from "react-icons/io5";
+import { IoSettingsSharp } from 'react-icons/io5'
+import { IoIosAddCircle } from 'react-icons/io'
+import { IoMdClose } from 'react-icons/io'
 export {
   IoHome,
   TbShieldLockFilled,
@@ -26,5 +28,7 @@ export {
   IoIosArrowForward,
   LuArrowUpRight,
   FaVault,
-  IoSettingsSharp
+  IoSettingsSharp,
+  IoIosAddCircle,
+  IoMdClose
 }

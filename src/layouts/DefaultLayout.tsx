@@ -21,6 +21,8 @@ export const DefaultLayout = () => {
           navigate('/login')
         }
       } catch (error) {
+        navigate('/login')
+        chrome.storage.local.clear()
         console.error('Error getting data from chrome.storage:', error)
       }
     }
