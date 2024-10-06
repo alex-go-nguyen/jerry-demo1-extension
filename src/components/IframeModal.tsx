@@ -87,7 +87,7 @@ export function IframeModal() {
             className='flex items-center text-blue-500  text-xl font-bold p-4 border-b border-b-gray-300 transition hover:bg-blue-200 hover:cursor-pointer'
           >
             <IoIosArrowBack className='text-2xl' />
-            <p className='ml-2'>Back</p>
+            <span className='ml-2'>Back</span>
           </div>
           <div>
             {showModalGeneratePassword ? (
@@ -140,9 +140,9 @@ export function IframeModal() {
                   }`}
                   id='status-can-add-account'
                 >
-                  {listAccounts.length > 0 ? 'Fill' : 'Add'}
+                  {listAccounts?.length > 0 ? 'Fill' : 'Add'}
                 </div>
-                <div className='text-lg'> {listAccounts.length > 0 ? listAccounts[0]['username'] : 'Start typing'}</div>
+                <div className='text-lg'> {listAccounts?.length > 0 ? listAccounts[0]['username'] : 'Start typing'}</div>
               </div>
             </div>
             <div className='mr-2 p-2 hover:bg-blue-200 transition'>

@@ -44,7 +44,7 @@ const actions = {
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     const actionHandler = actions[request.action] || actions.hiddenModalOptions
-    actionHandler(tabs, sendResponse)
+    actionHandler(tabs, sendResponse, request)
   })
 
   return true
