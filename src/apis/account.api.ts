@@ -1,6 +1,6 @@
 import { instance as axiosClient } from '@/config'
 
-import { ICreateAccountData } from '@/interfaces'
+import { ICreateAccountData, IUpdateAccountData } from '@/interfaces'
 
 export const accountApi = {
   create: async (data: ICreateAccountData) => {
@@ -8,6 +8,12 @@ export const accountApi = {
   },
   getListAccounts: async () => {
     return await axiosClient.get('/accounts')
+  },
+  getAccountByUserIdAndAccountId: async (accountId: string) => {
+    return await axiosClient.get(`/accounts/${accountId}`)
+  },
+  update: async (data: IUpdateAccountData) => {
+    const { accountId, ...updateAccountData } = data
+    return await axiosClient.put(`/accounts/update/${accountId}`, updateAccountData)
   }
 }
-

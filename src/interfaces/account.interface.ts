@@ -15,3 +15,7 @@ export interface ICurrentUser {
   name: string
   email: string
 }
+
+export interface IUpdateAccountData extends ICreateAccountData {
+  accountId: string
+}

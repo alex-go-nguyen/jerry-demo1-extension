@@ -31,7 +31,9 @@ export function Home() {
 
   const onActionClick = (key: string, account: IAccountInputData) => {
     if (key === 'edit') {
-      console.log(`Edit item of ${account.id}`)
+      chrome.tabs.create({
+        url: `index.html#/edit-account/${account.id}`
+      })
     } else if (key === 'delete') {
       console.log(`Delete item of ${account.id}`)
     }
@@ -111,7 +113,7 @@ export function Home() {
                 <span className='mr-3 cursor-pointer p-1 rounded-sm'>
                   <AiFillLock className='text-primary-800 text-3xl align-middle' />
                 </span>
-                <div className='relative'>
+                <div className='relative text-left'>
                   <span className='transition-all duration-500 text-gray-500 text-left opacity-100 group-hover:opacity-0 group-hover:transform group-hover:translate-y-2'>
                     {account.domain}
                   </span>

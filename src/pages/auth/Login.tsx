@@ -27,7 +27,7 @@ const schema = yup.object().shape({
 export function Login() {
   const navigate = useNavigate()
   const { setValue: setAccessToken } = useChromeStorage<string>(localStorageKeys.accessToken)
-  const { setValue: setRefreshToken } = useChromeStorage<string>(localStorageKeys.accessToken)
+  const { setValue: setRefreshToken } = useChromeStorage<string>(localStorageKeys.refreshToken)
   const { setValue: setCurrentUser } = useChromeStorage<object>(localStorageKeys.currentUser)
 
   const {
