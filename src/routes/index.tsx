@@ -4,7 +4,7 @@ import { Login } from '@/pages/auth'
 
 import { DefaultLayout, AuthLayout } from '@/layouts'
 
-import { Account, CreateAccount, Generator, Home, Notification } from '@/pages/client'
+import { Account, CreateAccount, EditAccount, Generator, Home, Notification } from '@/pages/client'
 
 import { IframeModal } from '@/components'
 
@@ -48,5 +48,9 @@ export const router = createHashRouter([
   {
     path: '/create-account',
     element: <CreateAccount />
+  },
+  {
+    path: '/edit-account/:accountId',
+    element: <EditAccount />
   }
 ])

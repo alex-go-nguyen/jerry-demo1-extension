@@ -28,20 +28,21 @@ instance.interceptors.response.use(
       try {
         const { refreshToken } = await chrome.storage.local.get(localStorageKeys.refreshToken)
 
-        const response = await axios.post(`${import.meta.env.VITE_API_URL_REFRESH_TOKEN}`, {
-          refreshToken
-        })
+        if (refreshToken) {
+          const response = await axios.post(`${import.meta.env.VITE_API_URL_REFRESH_TOKEN}`, {
+            refreshToken
+          })
 
-        const { accessToken, refreshToken: newRefreshToken } = response.data
+          const { accessToken, refreshToken: newRefreshToken } = response.data
 
-        chrome.storage.local.set({ accessToken })
-        chrome.storage.local.set({ refreshToken: newRefreshToken })
+          chrome.storage.local.set({ accessToken })
+          chrome.storage.local.set({ refreshToken: newRefreshToken })
 
-        instance.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
+          instance.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
+        }
 
         return instance(originalRequest)
       } catch (refreshError) {
-        console.error('Token refresh failed:', refreshError)
         chrome.storage.local.clear()
         return Promise.reject(refreshError)
       }
