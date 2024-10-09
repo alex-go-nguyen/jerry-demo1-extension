@@ -1,10 +1,19 @@
 import { createHashRouter } from 'react-router-dom'
 
-import { Login } from '@/pages/auth'
+import { Login } from '@/pages'
 
 import { DefaultLayout, AuthLayout } from '@/layouts'
 
-import { Account, CreateAccount, EditAccount, Generator, Home, Notification } from '@/pages/client'
+import {
+  Account,
+  CreateAccount,
+  CreateWorkspace,
+  EditAccount,
+  EditWorkspace,
+  Generator,
+  Home,
+  Workspace
+} from '@/pages'
 
 import { IframeModal } from '@/components'
 
@@ -22,8 +31,16 @@ export const router = createHashRouter([
         element: <Generator />
       },
       {
-        path: '/alert',
-        element: <Notification />
+        path: '/workspace',
+        element: <Workspace />
+      },
+      {
+        path: '/create-workspace',
+        element: <CreateWorkspace />
+      },
+      {
+        path: '/edit-workspace',
+        element: <EditWorkspace />
       },
       {
         path: '/account',

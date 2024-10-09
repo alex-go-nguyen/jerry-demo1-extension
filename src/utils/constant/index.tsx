@@ -1,13 +1,13 @@
 import {
   IoHome,
   TbShieldLockFilled,
-  IoNotifications,
   FaUserAlt,
   BiSolidKey,
   IoIosArrowForward,
   FaVault,
   LuArrowUpRight,
-  IoSettingsSharp
+  IoSettingsSharp,
+  BsPersonWorkspace
 } from '@/utils/common'
 
 export const bottomTabList = [
@@ -22,9 +22,9 @@ export const bottomTabList = [
     to: '/generator'
   },
   {
-    title: 'Alerts',
-    icon: <IoNotifications />,
-    to: '/alert'
+    title: 'Workspace',
+    icon: <BsPersonWorkspace />,
+    to: '/workspace'
   },
   {
     title: 'Account',

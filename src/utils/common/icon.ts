@@ -21,6 +21,10 @@ import { TbTrash } from 'react-icons/tb'
 import { IoLogOut } from 'react-icons/io5'
 import { FaLanguage } from 'react-icons/fa6'
 import { TbVersionsFilled } from 'react-icons/tb'
+import { BsPersonWorkspace } from 'react-icons/bs'
+import { MdFolder } from 'react-icons/md'
+import { MdAdd } from 'react-icons/md'
+import { PiShareFat } from 'react-icons/pi'
 export {
   IoHome,
   TbShieldLockFilled,
@@ -44,5 +48,9 @@ export {
   TbTrash,
   IoLogOut,
   FaLanguage,
-  TbVersionsFilled
+  TbVersionsFilled,
+  BsPersonWorkspace,
+  MdFolder,
+  MdAdd,
+  PiShareFat
 }

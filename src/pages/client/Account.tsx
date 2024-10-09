@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react'
-
+import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 
 import { Dropdown, MenuProps, message, Space } from 'antd'
@@ -22,16 +21,12 @@ const itemsLanguages: MenuProps['items'] = [
 export function Account() {
   const navigate = useNavigate()
 
-  const [currentUser, setCurrentUser] = useState<ICurrentUser>()
-
-  useEffect(() => {
-    const getData = async () => {
-      const currentUser = await getCurrentUser()
-      console.log('currentUser', currentUser)
-      setCurrentUser(currentUser)
+  const { data: currentUser } = useQuery<ICurrentUser>({
+    queryKey: ['currentUser'],
+    queryFn: async () => {
+      return await getCurrentUser()
     }
-    getData()
-  }, [])
+  })
 
   const handleLogout = () => {
     chrome.storage.local
@@ -47,7 +42,7 @@ export function Account() {
 
   return (
     <section className='bg-radial-custom h-full'>
-      <h2 className='flex items-center text-lg font-semibold p-2 bg-blue-antd text-white leading-[64px]'>
+      <h2 className='flex items-center text-lg font-semibold bg-blue-antd text-white leading-[64px]'>
         <span className='mr-2'>
           <FaUserAlt />
         </span>
