@@ -28,7 +28,8 @@ window.addEventListener('load', function () {
     position: absolute; 
     display: none;
     width: 100vw;
-    height: 124px;
+    height: 330px;
+    max-height: 400px;
     z-index: 2147483647;
     border-radius: 4px;
     max-width: 280px;
@@ -82,20 +83,27 @@ window.addEventListener('load', function () {
     const left =
       rect.width < 300 ? rect.width - iconWidth - paddingRight - marginRight - 5 : rect.width - iconWidth - rect.left
     modalDiv.style.left = `${rect.left}px`
-    modalDiv.style.top = `${rect.top + iconHeight}px`
+
+    modalDiv.style.top = `${rect.top + rect.height}px`
     icon.style.top = `${top}px`
     icon.style.left = `${left}px`
   }
 
   document.querySelectorAll('form input[type="password"]').forEach((passwordField) => {
+    const parentNode = passwordField.parentNode
     const goPassIconRoot = createElement(
       'div',
       'go-pass-icon-root',
       `
       position: relative !important; height: 0px !important; width: 0px !important; float: left !important;
-    `,
-      passwordField.parentNode
+    `
     )
+
+    const goPassIconRootShadow = goPassIconRoot.attachShadow({ mode: 'open' })
+
+    if (parentNode && parentNode.contains(passwordField)) {
+      parentNode.insertBefore(goPassIconRoot, passwordField.nextSibling)
+    }
 
     const icon = createElement(
       'img',
@@ -103,7 +111,7 @@ window.addEventListener('load', function () {
       `
       position: absolute; cursor: pointer; height: 22px; width: 22px; z-index: auto;
     `,
-      goPassIconRoot.attachShadow({ mode: 'open' })
+      goPassIconRootShadow
     )
     icon.src = chrome.runtime.getURL('icons/icon48.png')
 
@@ -125,6 +133,7 @@ window.addEventListener('load', function () {
         }
       })
     })
+    handleIconPosition(icon, passwordField)
     window.addEventListener('resize', () => handleIconPosition(icon, passwordField))
   })
 
@@ -143,7 +152,9 @@ window.addEventListener('load', function () {
     closeFormCreateAccountIframe: () => updateIframeDisplay('go-pass-form-save-account', 'none'),
     showMoreOptions: () => updateHeight('193px'),
     showModalGeneratePassword: () => updateHeight('400px'),
-    noShowMoreOptions: () => updateHeight('124px')
+    clickLoadMore: () => updateHeight('360px'),
+    hideLoadMore: () => updateHeight('300px'),
+    noShowMoreOptions: () => updateHeight('330px')
   }
 
   const updateHeight = (height) => {
@@ -172,8 +183,6 @@ window.addEventListener('load', function () {
   })
 })
 
-
-
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'fillForm') {
     const { username, password } = message
@@ -187,4 +196,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
   sendResponse({ status: 'success' })
   return true
+})
+
+document.addEventListener('DOMContentLoaded', function () {
+  const rootContainIframe = this.document.getElementById('root')
+
+  if (rootContainIframe) {
+    const bodyTag = rootContainIframe.parentElement
+    bodyTag.style.overflowY = 'hidden'
+  }
 })

@@ -28,6 +28,16 @@ const actions = {
       sendResponse({ status: 'success' })
     })
   },
+  clickLoadMore: (tabs, sendResponse, request) => {
+    chrome.tabs.sendMessage(tabs[0].id, { action: 'clickLoadMore' }, () => {
+      sendResponse({ status: 'success' })
+    })
+  },
+  hideLoadMore: (tabs, sendResponse, request) => {
+    chrome.tabs.sendMessage(tabs[0].id, { action: 'hideLoadMore' }, () => {
+      sendResponse({ status: 'success' })
+    })
+  },
   hiddenModalOptions: (tabs, sendResponse, request) => {
     chrome.tabs.sendMessage(tabs[0].id, { action: 'hiddenModalOptions' }, () => {
       sendResponse({ status: 'success' })
