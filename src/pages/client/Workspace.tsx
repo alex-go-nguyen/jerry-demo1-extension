@@ -16,8 +16,6 @@ import { AccountItem, WorkspaceItem } from '@/components'
 import { IAccountInputData, ICurrentUser, IWorkspaceData } from '@/interfaces'
 
 import { BsPersonWorkspace, MdAdd, getCurrentUser } from '@/utils/common'
-
-
 export function Workspace() {
   const queryClient = useQueryClient()
 
@@ -41,6 +39,7 @@ export function Workspace() {
   const [deleteWorkspaceId, setDeleteWorkspaceId] = useState<string>('')
 
   const { value: openWarningDeleteWorkspace, toggle: setOpenWarningDeleteWorkspace } = useBoolean(false)
+
   const onSearch = (data: string) => {
     console.log(data)
   }
@@ -135,11 +134,7 @@ export function Workspace() {
             </div>
             <ul>
               {accessWorkspace?.accounts?.map((account: IAccountInputData) => (
-                <AccountItem
-                  key={account.id}
-                  account={account}
-                  showAction={false}
-                />
+                <AccountItem key={account.id} account={account} showAction={false} />
               ))}
             </ul>
           </div>

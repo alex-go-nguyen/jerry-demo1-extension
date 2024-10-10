@@ -15,6 +15,7 @@ export const workspaceApi = {
     const response = await axiosClient.put(`/workspaces/update/${updateWorkspaceData.id}`, updateWorkspaceData)
     return response.data
   },
+
   softDelete: async (workspaceId: string) => {
     const response = await axiosClient.delete(`/workspaces/soft-delete/${workspaceId}`)
     return response.data
