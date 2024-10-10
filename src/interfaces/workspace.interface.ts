@@ -13,3 +13,8 @@ export interface IWorkspaceData extends IWorkspaceInputData {
 export interface IWorkspaceUpdateData extends IWorkspaceInputData {
   id: string
 }
+
+export interface IWorkspaceShareData {
+  workspaceId?: string | undefined;
+  emails?: (string | undefined)[] | undefined;
+}
