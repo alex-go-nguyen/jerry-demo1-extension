@@ -6,22 +6,22 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useForm, Controller } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 
-import { Button, Input, Spin, Typography, message } from 'antd'
-import { MailOutlined, LockOutlined, GlobalOutlined } from '@ant-design/icons'
-
-import { decryptPassword, IoMdClose } from '@/utils/common'
+import { Form, Spin, message } from 'antd'
 
 import { accountService } from '@/services'
 
 import { ICreateAccountData } from '@/interfaces'
 
-const { Text } = Typography
+import { accountFields } from '@/utils/constant'
+import { decryptPassword, IoMdClose } from '@/utils/common'
+
+import { CustomBtn, CustomInput } from '@/components'
 
 const editAccountSchema = yup.object().shape({
-  username: yup.string().required('Please input your username!'),
-  password: yup.string().min(8, 'Password needs to be at least 8 characters.').required('Please input your password!'),
+  username: yup.string().required('Please input your credential!'),
+  password: yup.string().required('Please input your password!').min(8, 'Password needs to be at least 8 characters.'),
   domain: yup.string().required('Please input domain name!').default('')
 })
 
@@ -83,7 +83,7 @@ export function EditAccount() {
     <section className='flex h-screen'>
       <div className='relative flex flex-col box-border min-h-[188px] border border-[#d5d9de] m-auto rounded-[4px] shadow-[0_3px_9px_rgba(0,0,0,0.3)] w-2/5 min-w-[420px] bg-[#f7f9fc] p-4'>
         <div className='flex justify-between items-center'>
-          <h2 className='text-xl text-primary-500 font-semibold'>Edit Account</h2>
+          <h2 className='text-xl text-primary-800 font-semibold'>Edit Account</h2>
           <span className='hover:bg-red-100 cursor-pointer' id='edit-account-form-close' onClick={handleCloseForm}>
             <IoMdClose className='text-3xl text-red-500 font-semibold ' />
           </span>
@@ -91,73 +91,33 @@ export function EditAccount() {
         {isLoading ? (
           <Spin className='mt-8' />
         ) : (
-          <form className='bg-white mt-3 p-3 border border-gray-200' onSubmit={handleSubmit(handleUpdateAccount)}>
-            <div>
-              <label className='font-semibold'>Domain</label>
-              <Controller
-                name='domain'
+          <Form
+            className='bg-white mt-3 px-3 border border-gray-200'
+            onFinish={handleSubmit(handleUpdateAccount)}
+            layout='vertical'
+          >
+            {accountFields.map((field) => (
+              <CustomInput
+                key={field.name}
+                name={field.name}
+                size='large'
+                label={field.label}
                 control={control}
-                render={({ field }) => (
-                  <Input
-                    {...field}
-                    size='large'
-                    placeholder='Enter domain name'
-                    type='text'
-                    prefix={<GlobalOutlined />}
-                    className='border-0 border-b-2 border-gray-400 hover:border-primary-800 focus:ring-0 focus:outline-none focus-within:shadow-none rounded-none px-0'
-                  />
-                )}
+                errors={errors}
+                placeholder={field.placeholder}
+                prefixIcon={field.prefixIcon}
               />
-              {errors.domain && <Text type='danger'>{errors.domain.message}</Text>}
-            </div>
+            ))}
 
-            <div className='mt-8'>
-              <label className='font-semibold'>Username</label>
-              <Controller
-                name='username'
-                control={control}
-                render={({ field }) => (
-                  <Input
-                    {...field}
-                    size='large'
-                    placeholder='Enter your email address'
-                    type='text'
-                    prefix={<MailOutlined />}
-                    className='border-0 border-b-2 border-gray-400 hover:border-primary-800 focus:ring-0 focus:outline-none focus-within:shadow-none rounded-none px-0'
-                  />
-                )}
-              />
-              {errors.username && <Text type='danger'>{errors.username.message}</Text>}
-            </div>
-
-            <div className='mt-8'>
-              <label className='font-semibold'>Password</label>
-              <Controller
-                name='password'
-                control={control}
-                render={({ field }) => (
-                  <Input.Password
-                    {...field}
-                    size='large'
-                    placeholder='Enter your Password'
-                    prefix={<LockOutlined />}
-                    className='border-0 border-b-2 border-gray-400 hover:border-primary-800 focus:ring-0 focus:outline-none focus-within:shadow-none rounded-none px-0'
-                  />
-                )}
-              />
-              {errors.password && <Text type='danger'>{errors.password.message}</Text>}
-            </div>
-
-            <Button
+            <CustomBtn
+              title='Save'
               type='primary'
               htmlType='submit'
+              className='additional-custom-class'
               disabled={isPending}
-              className='w-full h-12 mt-4 border-none font-bold rounded-md bg-primary-800 
-            disabled:bg-primary-800 disabled:text-white disabled:opacity-70 disabled:cursor-not-allowed'
-            >
-              {isPending ? <Spin className='text-rose-600' /> : 'Update password'}
-            </Button>
-          </form>
+              loading={isPending}
+            />
+          </Form>
         )}
       </div>
     </section>

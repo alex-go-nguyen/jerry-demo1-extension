@@ -7,12 +7,12 @@ const { Footer } = Layout
 
 export function BottomTab() {
   return (
-    <Footer className='flex justify-between items-center text-white bg-[#4096ff] p-0'>
+    <Footer className='flex justify-between items-center text-white bg-primary-800 p-0'>
       {bottomTabList.map((bottomTabItem) => (
         <div className='flex-1' key={bottomTabItem.title}>
           <NavLink
             className={({ isActive }) =>
-              `py-3 flex flex-col items-center justify-center ${isActive ? 'bg-primary-800' : ''}`
+              `py-3 flex flex-col items-center justify-center ${isActive ? 'bg-primary-500' : ''}`
             }
             to={bottomTabItem.to}
           >

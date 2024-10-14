@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react'
 
 import { useQuery } from '@tanstack/react-query'
 
-import { Input } from 'antd'
-
 import { useBoolean } from '@/hooks'
 
 import { Generator } from '@/pages'
@@ -15,6 +13,8 @@ import { IAccountInputData } from '@/interfaces'
 import { AiFillLock, HiPencilSquare, IoIosArrowBack, IoIosAddCircle, decryptPassword } from '@/utils/common'
 
 import { listMoreOptions } from '@/utils/constant'
+
+import { CustomInput } from './CustomInput'
 
 export function IframeModal() {
   const { data: listAccounts } = useQuery({
@@ -81,7 +81,7 @@ export function IframeModal() {
     chrome.runtime.sendMessage({ action: 'hideLoadMore' })
     setLimitAccount(listSuggestAccounts.length)
   }
-  const searchAccount = (inputValue: string) => {
+  const handleSearchAccount = (inputValue: string) => {
     if (inputValue) {
       const newSuggestAccounts = listSuggestAccounts.filter(
         (account) => account.domain.includes(inputValue) || account.username.includes(inputValue)
@@ -134,55 +134,60 @@ export function IframeModal() {
         </>
       ) : (
         <div className='flex flex-col'>
+          <CustomInput
+            name='searchValue'
+            size='large'
+            placeholder='Search account'
+            className='w-[95%] text-lg font-medium mx-[6px] mb-0 mt-[6px] border-1 border-gray-200 rounded-md hover:border-primary-800 focus-within:shadow-custom shadow-md'
+            onChange={(e: { target: { value: string } }) => handleSearchAccount(e.target.value)}
+          />
           {listSuggestAccounts?.length > 0 ? (
-            <>
-              <Input
-                placeholder='Search account'
-                onChange={(e) => searchAccount(e.target.value)}
-                className='py-1 px-2 text-base text-gray-500'
-              />
-
-              <ul className='max-h-[200px] overflow-y-scroll'>
-                {listSuggestAccounts.slice(0, limitAccount).map((account) => (
-                  <li
-                    id='header-modal'
-                    className='flex justify-between items-center border-b border-b-gray-300 transition hover:bg-blue-200 hover:cursor-pointer group'
-                  >
-                    <div className='flex flex-1 items-center p-2' onClick={handleFillAccountToInputField(account)}>
-                      <span className='mr-3 cursor-pointer p-1 rounded-sm'>
-                        <AiFillLock className='text-primary-800 text-3xl align-middle' />
-                      </span>
-                      <div className='relative text-left'>
-                        <span className='transition-all duration-500 text-gray-800 text-left opacity-100 group-hover:opacity-0 group-hover:transform group-hover:translate-y-2'>
-                          {account.domain}
-                        </span>
-
-                        <span className='absolute top-0 left-0 transition-all duration-500 text-sm font-bold opacity-0 transform -translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 group-hover:text-primary-500'>
-                          Fill
-                        </span>
-                        <div className='text-left text-base font-medium text-gray-600'>{account.username}</div>
-                      </div>
-                    </div>
-                    <div
-                      className='mr-2 p-2 hover:bg-blue-200 transition group-hover:bg-blue-300'
-                      onClick={handleOpenTabEditAccount(account)}
-                    >
-                      <HiPencilSquare className='text-primary-800 text-2xl cursor-pointer' />
-                    </div>
-                  </li>
-                ))}
-              </ul>
-
-              {limitAccount < listSuggestAccounts?.length && (
-                <button
-                  className='w-full text-lg text-left p-4 cursor-pointer transition hover:bg-blue-200 '
-                  onClick={handleLoadMore}
+            <ul
+              className={`max-h-[215px] shadow-md pt-2 overflow-x-hidden ${limitAccount > 3 && listSuggestAccounts?.length > 3 && 'overflow-y-scroll'}`}
+            >
+              {listSuggestAccounts.slice(0, limitAccount).map((account) => (
+                <li
+                  id='header-modal'
+                  className='flex justify-between items-center border-t border-t-gray-300 transition hover:bg-blue-200 hover:cursor-pointer group'
                 >
-                  Load More
-                </button>
-              )}
-            </>
+                  <div className='flex flex-1 items-center p-2' onClick={handleFillAccountToInputField(account)}>
+                    <span className='mr-3 cursor-pointer p-1 rounded-sm'>
+                      <AiFillLock className='text-primary-800 text-3xl align-middle' />
+                    </span>
+                    <div className='relative text-left'>
+                      <span className='transition-all duration-500 text-base text-slate-600 text-left opacity-100 group-hover:opacity-0 group-hover:transform group-hover:translate-y-2'>
+                        {account.domain}
+                      </span>
+
+                      <span className='absolute top-0 left-0 transition-all duration-500 text-sm font-bold opacity-0 transform -translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 group-hover:text-primary-500'>
+                        Fill
+                      </span>
+                      <div className='text-left text-lg font-medium text-slate-700'>{account.username}</div>
+                    </div>
+                  </div>
+                  <div
+                    className='p-2 hover:bg-blue-200 transition group-hover:bg-blue-300'
+                    onClick={handleOpenTabEditAccount(account)}
+                  >
+                    <HiPencilSquare className='text-primary-800 text-2xl cursor-pointer' />
+                  </div>
+                </li>
+              ))}
+            </ul>
           ) : (
+            <span className='text-slate-700 text-lg text-center'>No account founded</span>
+          )}
+
+          {limitAccount < listSuggestAccounts?.length && (
+            <button
+              className='w-full text-lg text-left p-4 cursor-pointer transition hover:bg-blue-200 border-t border-gray-300'
+              onClick={handleLoadMore}
+            >
+              Load More
+            </button>
+          )}
+
+          {listAccounts?.filter((account: IAccountInputData) => account.domain.includes(currentUrl))?.length === 0 && (
             <li
               id='header-modal'
               className='flex justify-between items-center border-b border-b-gray-300 transition hover:bg-blue-200 hover:cursor-pointer group'
@@ -193,14 +198,14 @@ export function IframeModal() {
                   <AiFillLock className='text-primary-800 text-3xl align-middle' />
                 </span>
                 <div className='relative text-left'>
-                  <span className='transition-all duration-500 text-gray-800 text-left opacity-100 group-hover:opacity-0 group-hover:transform group-hover:translate-y-2'>
+                  <span className='transition-all duration-500 text-base text-slate-600 text-left opacity-100 group-hover:opacity-0 group-hover:transform group-hover:translate-y-2'>
                     {currentUrl}
                   </span>
 
                   <span className='absolute top-0 left-0 transition-all duration-500 text-sm font-bold opacity-0 transform -translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 group-hover:text-primary-500'>
                     Add
                   </span>
-                  <div className='text-left text-base font-medium text-gray-600'>Start typing</div>
+                  <div className='text-left text-lg font-medium text-slate-700'>Start typing</div>
                 </div>
               </div>
               <div className='mr-2 p-2 hover:bg-blue-200 transition'>
@@ -210,7 +215,7 @@ export function IframeModal() {
           )}
 
           <button
-            className='w-full text-lg text-left p-4 cursor-pointer transition hover:bg-blue-200'
+            className='w-full text-lg text-left p-4 cursor-pointer transition hover:bg-blue-200 border-t border-gray-300'
             onClick={handleToggleOptions}
           >
             More options...

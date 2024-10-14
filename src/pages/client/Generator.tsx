@@ -79,14 +79,14 @@ export function Generator({ isShowHeader = true }) {
   return (
     <div>
       {isShowHeader && (
-        <Header className='text-left capitalize text-white font-semibold text-xl leading-[64px] bg-blue-antd px-3'>
+        <Header className='text-left capitalize text-white font-semibold text-xl leading-[64px] bg-primary-800 px-3'>
           Password Generator
         </Header>
       )}
 
       <div className='mt-5 mx-4'>
-        <div className='flex justify-between items-center border-2 border-gray-200 px-3 py-2'>
-          <p className='text-gray-800 text-lg text-left truncate'>{password}</p>
+        <div className='flex justify-between items-center border-2 border-slate-200 px-3 py-2'>
+          <p className='text-slate-800 text-lg text-left truncate'>{password}</p>
           <div className='flex'>
             <Tooltip title='copy' color='blue'>
               <FaCopy
@@ -102,8 +102,8 @@ export function Generator({ isShowHeader = true }) {
 
         <div className='mt-5'>
           <div className='flex justify-between'>
-            <p className='text-gray-800 text-lg text-left'>Password length</p>
-            <p className='text-gray-800 text-lg text-right'>{passwordSettings.length}</p>
+            <p className='text-slate-800 text-xl text-left'>Password length</p>
+            <p className='text-slate-800 text-lg text-right'>{passwordSettings.length}</p>
           </div>
           <Slider
             min={8}
@@ -114,12 +114,12 @@ export function Generator({ isShowHeader = true }) {
         </div>
 
         <div className='flex flex-col mt-5'>
-          <p className='text-gray-800 text-lg text-left mb-2'>Password settings</p>
+          <p className='text-slate-800 0 text-xl text-left mb-2'>Password settings</p>
           {passwordSettingOptions.map(({ key, text }) => (
             <Checkbox
               key={key}
               disabled={disablePasswordSetting === key}
-              className='text-lg text-gray-700 mb-2'
+              className='text-lg text-slate-700 mb-2'
               checked={!!passwordSettings[key as keyof PasswordSettings]}
               onChange={(e) => handleChangePasswordSetting(key as keyof PasswordSettings, e.target.checked)}
             >

@@ -1,5 +1,6 @@
-import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
+
+import { useQuery } from '@tanstack/react-query'
 
 import { Dropdown, MenuProps, message, Space } from 'antd'
 
@@ -42,7 +43,7 @@ export function Account() {
 
   return (
     <section className='bg-radial-custom h-full'>
-      <h2 className='flex items-center text-lg font-semibold bg-blue-antd text-white leading-[64px]'>
+      <h2 className='flex items-center text-lg font-semibold bg-primary-800 text-white leading-[64px] px-2'>
         <span className='mr-2'>
           <FaUserAlt />
         </span>
@@ -53,18 +54,18 @@ export function Account() {
       <Dropdown
         menu={{ items: itemsLanguages, onClick }}
         trigger={['click']}
-        className='block text-left text-lg text-gray-800 p-2 cursor-pointer hover:text-blue-antd'
+        className='block text-left text-lg text-slate-800 p-2 cursor-pointer hover:text-blue-antd'
       >
         <Space className='flex'>
           <span>
             <FaLanguage />
           </span>
-          Languages
+          Languages(en)
         </Space>
       </Dropdown>
 
       <div>
-        <a href='' className='flex items-center text-lg text-gray-800 p-2'>
+        <a className='flex items-center text-lg text-slate-800 p-2'>
           <span>
             <TbVersionsFilled className='mr-2' />
           </span>
@@ -72,7 +73,7 @@ export function Account() {
         </a>
       </div>
       <div>
-        <a href='' className='flex items-center text-lg text-gray-800 p-2'>
+        <a className='flex items-center text-lg text-slate-800 p-2'>
           <span>
             <IoSettingsSharp className='mr-2' />
           </span>
@@ -82,7 +83,7 @@ export function Account() {
 
       <button
         onClick={handleLogout}
-        className='flex items-center w-full text-lg text-gray-800 p-2 hover:text-blue-antd'
+        className='flex items-center w-full text-lg text-slate-800 p-2 hover:text-blue-antd'
       >
         <IoLogOut className='text-xl mr-2' />
         Log out
