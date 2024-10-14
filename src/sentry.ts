@@ -1,12 +1,19 @@
-import * as Sentry from '@sentry/react'
+import { BrowserClient, defaultStackParser, getDefaultIntegrations, makeFetchTransport, Scope } from '@sentry/browser'
 
-Sentry.init({
-  dsn: import.meta.env.VITE_SENTRY_URL,
-  integrations: [Sentry.browserTracingIntegration(), Sentry.browserProfilingIntegration(), Sentry.replayIntegration()],
+import { environmentConfig } from '@/utils/constant'
 
-  tracesSampleRate: 1.0,
-  tracePropagationTargets: ['localhost', /^https:\/\/yourserver\.io\/api/],
-
-  replaysSessionSampleRate: 0.1,
-  replaysOnErrorSampleRate: 1.0
+const integrations = getDefaultIntegrations({}).filter((defaultIntegration) => {
+  return !['BrowserApiErrors', 'Breadcrumbs', 'GlobalHandlers'].includes(defaultIntegration.name)
 })
+
+const client = new BrowserClient({
+  dsn: environmentConfig.sentryUrl,
+  transport: makeFetchTransport,
+  stackParser: defaultStackParser,
+  integrations: integrations
+})
+
+const scope = new Scope()
+scope.setClient(client)
+
+client.init()
