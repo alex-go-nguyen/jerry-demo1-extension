@@ -82,7 +82,6 @@ export function Login() {
                   control={control}
                   errors={errors}
                   placeholder={field.placeholder}
-                  prefixIcon={field.prefixIcon}
                 />
               )
           })}

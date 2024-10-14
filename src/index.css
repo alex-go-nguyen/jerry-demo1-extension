@@ -29,4 +29,13 @@
 
 .ant-form-item-label {
   text-align: left !important;
+  padding: 0 !important;
 }
+
+:where(.css-qnu6hi).ant-input-outlined.ant-input-status-error:not(.ant-input-disabled),
+:where(.css-qnu6hi).ant-input-outlined.ant-input-status-error:not(.ant-input-disabled):focus-within {
+  background: #ffffff;
+  border: 1px solid #ff4d4f;
+  box-shadow: 0 0 0 1px #ff4d4f;
+}
+

@@ -110,8 +110,8 @@ export function EditWorkspace() {
           placeholder='Enter workspace name'
           prefixIcon={<BsPersonWorkspace />}
         />
-        <div className='flex flex-col mt-14 mb-2 text-left'>
-          <label className='text-lg font-medium text-slate-800'>Choose accounts</label>
+        <div className='flex flex-col mt-3 mb-2 text-left'>
+        <label className='text-lg font-normal text-slate-800'>Choose accounts</label>
           <Controller
             name='accounts'
             control={control}

@@ -105,7 +105,6 @@ export function EditAccount() {
                 control={control}
                 errors={errors}
                 placeholder={field.placeholder}
-                prefixIcon={field.prefixIcon}
               />
             ))}
 

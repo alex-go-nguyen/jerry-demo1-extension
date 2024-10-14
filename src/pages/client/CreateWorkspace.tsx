@@ -32,7 +32,7 @@ type accountOption = {
 export function CreateWorkspace() {
   const queryClient = useQueryClient()
   const navigate = useNavigate()
-  
+
   const { data: accounts } = useQuery({
     queryKey: ['accounts'],
     queryFn: async () => {
@@ -95,7 +95,7 @@ export function CreateWorkspace() {
           prefixIcon={<BsPersonWorkspace />}
         />
         <div className='flex flex-col mt-3 mb-2 text-left'>
-          <label className='text-lg font-medium text-black mb-2'>Choose accounts</label>
+          <label className='text-lg font-normal text-slate-800'>Choose accounts</label>
           <Controller
             name='accounts'
             control={control}
@@ -103,9 +103,7 @@ export function CreateWorkspace() {
               <Select
                 {...field}
                 mode='multiple'
-                style={{ width: '100%' }}
                 placeholder='Select accounts'
-                className='text-lg '
                 options={accountOptions}
                 onChange={(value) => field.onChange(value)}
                 filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}

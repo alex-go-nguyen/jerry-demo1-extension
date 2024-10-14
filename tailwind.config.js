@@ -12,7 +12,8 @@ export default {
         'blue-antd': '#4096ff'
       },
       boxShadow: {
-        custom: '0 0 0 0.2rem #C7D2FE'
+        custom: '0 0 0 1px #0A2FB6',
+        error: '0 0 0 1px #ff4d4f'
       },
       backgroundImage: {
         'radial-custom':

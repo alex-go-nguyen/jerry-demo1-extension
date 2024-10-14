@@ -28,9 +28,8 @@ export const CustomInput: React.FC<CustomInputProps> = ({
 }) => {
   return control ? (
     <Form.Item
-      label={<span className='text-lg font-medium'>{label}</span>}
-      className='mb-0 mt-4 text-lg font-medium'
-      hasFeedback
+      label={<span className='text-lg font-normal'>{label}</span>}
+      className='mb-0 border-0 mt-4 text-lg font-normal'
       validateStatus={errors[name] ? 'error' : ''}
       help={errors[name]?.message}
     >
@@ -43,7 +42,7 @@ export const CustomInput: React.FC<CustomInputProps> = ({
             size={size}
             placeholder={placeholder}
             prefix={prefixIcon}
-            className={`text-lg font-medium border-1 border-gray-200 rounded-md hover:border-primary-800 focus-within:shadow-custom ${className}`}
+            className={`text-lg font-medium border-1 border-gray-200 rounded-md hover:border-primary-800 focus-within:!border-primary-800 focus-within:!shadow-custom px-4 py-[9px] ${className}`}
           />
         )}
       />
@@ -54,7 +53,7 @@ export const CustomInput: React.FC<CustomInputProps> = ({
       size={size}
       onChange={onChange}
       placeholder={placeholder}
-      className={`text-lg font-medium mr-2 border-1 border-gray-200 rounded-md hover:border-primary-800 focus-within:shadow-custom ${className}`}
+      className={`text-lg font-medium mr-2 border-1 border-gray-200 rounded-md hover:border-primary-800 focus-within:!border-primary-800 focus-within:!shadow-custom ${className}`}
     />
   )
 }

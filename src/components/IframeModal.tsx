@@ -138,12 +138,12 @@ export function IframeModal() {
             name='searchValue'
             size='large'
             placeholder='Search account'
-            className='w-[95%] text-lg font-medium mx-[6px] mb-0 mt-[6px] border-1 border-gray-200 rounded-md hover:border-primary-800 focus-within:shadow-custom shadow-md'
+            className='w-full text-lg font-medium m-0 hover:border-primary-800'
             onChange={(e: { target: { value: string } }) => handleSearchAccount(e.target.value)}
           />
           {listSuggestAccounts?.length > 0 ? (
             <ul
-              className={`max-h-[215px] shadow-md pt-2 overflow-x-hidden ${limitAccount > 3 && listSuggestAccounts?.length > 3 && 'overflow-y-scroll'}`}
+              className={`max-h-[215px] shadow-md overflow-x-hidden ${limitAccount > 3 && listSuggestAccounts?.length > 3 && 'overflow-y-scroll'}`}
             >
               {listSuggestAccounts.slice(0, limitAccount).map((account) => (
                 <li

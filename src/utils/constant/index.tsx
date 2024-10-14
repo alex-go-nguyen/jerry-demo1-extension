@@ -9,7 +9,6 @@ import {
   IoSettingsSharp,
   BsPersonWorkspace
 } from '@/utils/common'
-import { LockOutlined, MailOutlined, GlobalOutlined, UserOutlined } from '@ant-design/icons'
 
 export const bottomTabList = [
   {
@@ -84,14 +83,12 @@ export const authFields = [
   {
     label: 'Email',
     name: 'email',
-    placeholder: 'Enter your email',
-    prefixIcon: <MailOutlined />
+    placeholder: 'Enter your email'
   },
   {
     label: 'Password',
     name: 'password',
-    placeholder: 'Enter your password',
-    prefixIcon: <LockOutlined />
+    placeholder: 'Enter your password'
   }
 ]
 
@@ -109,18 +106,15 @@ export const accountFields = [
     label: 'Domain',
     name: 'domain',
     placeholder: 'Enter domain name',
-    prefixIcon: <GlobalOutlined />
   },
   {
     label: 'Credential',
     name: 'username',
     placeholder: 'Enter your credential',
-    prefixIcon: <UserOutlined />
   },
   {
     label: 'Password',
     name: 'password',
     placeholder: 'Enter your password',
-    prefixIcon: <LockOutlined />
   }
 ]

@@ -75,16 +75,20 @@ export function CreateAccount() {
   }
 
   return (
-    <section className='transform translate-y-0 transition-transform duration-[600ms] ease-[cubic-bezier(0.2,1.35,0.7,0.95)]'>
+    <section className=''>
       <div className='relative flex flex-col box-border min-h-[188px] border border-[#d5d9de] rounded-[4px] shadow-[0_3px_9px_rgba(0,0,0,0.3)] my-[9px] mx-[6px] mb-[12px] w-[420px] bg-[#f7f9fc] p-4'>
         <div className='flex justify-between items-center'>
           <h2 className='text-xl text-primary-800 font-semibold'>Add to GoPass?</h2>
-          <span className='hover:bg-red-100 cursor-pointer' id='create-account-form-close' onClick={handleCloseForm}>
-            <IoMdClose className='text-3xl text-red-500 font-semibold' />
+          <span
+            className='hover:bg-red-100 hover:text-red-500 cursor-pointer '
+            id='create-account-form-close'
+            onClick={handleCloseForm}
+          >
+            <IoMdClose className='text-3xl text-gray-500 font-semibold' />
           </span>
         </div>
         <Form
-          className='bg-white mt-3 px-3 border border-gray-200'
+          className='bg-white mt-3 px-3 border border-gray-200 pb-3'
           onFinish={handleSubmit(handleSaveAccount)}
           layout='vertical'
         >
@@ -97,17 +101,10 @@ export function CreateAccount() {
               control={control}
               errors={errors}
               placeholder={field.placeholder}
-              prefixIcon={field.prefixIcon}
             />
           ))}
 
-          <CustomBtn
-            title='Save'
-            type='primary'
-            htmlType='submit'
-            disabled={isPending}
-            loading={isPending}
-          />
+          <CustomBtn title='Save' type='primary' htmlType='submit' disabled={isPending} loading={isPending} />
         </Form>
       </div>
     </section>
