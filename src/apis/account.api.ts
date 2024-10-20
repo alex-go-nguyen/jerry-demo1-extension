@@ -15,5 +15,8 @@ export const accountApi = {
   update: async (data: IUpdateAccountData) => {
     const { accountId, ...updateAccountData } = data
     return await axiosClient.put(`/accounts/update/${accountId}`, updateAccountData)
+  },
+  delete: async (accountId: string) => {
+    return await axiosClient.delete(`/accounts/delete/${accountId}`)
   }
 }
