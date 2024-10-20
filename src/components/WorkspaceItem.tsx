@@ -2,9 +2,19 @@ import React from 'react'
 
 import { useNavigate } from 'react-router-dom'
 
-import { Button, Dropdown, MenuProps } from 'antd'
+import { useMutation } from '@tanstack/react-query'
 
-import { IWorkspaceData } from '@/interfaces'
+import * as Yup from 'yup'
+import { useForm, Controller } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
+
+import { Button, Dropdown, MenuProps, Modal, Select, Form, message } from 'antd'
+
+import { useBoolean } from '@/hooks'
+
+import { workspaceSharingApi } from '@/apis'
+
+import { IWorkspaceData, IWorkspaceShareData } from '@/interfaces'
 
 import { GrEdit, MdFolder, TbTrash, TfiMoreAlt, PiShareFat } from '@/utils/common'
 
@@ -16,6 +26,11 @@ type WorkspaceItemProps = {
   setOpen: () => void
 }
 
+const schema = Yup.object().shape({
+  workspaceId: Yup.string(),
+  emails: Yup.array().of(Yup.string().email('Invalid email format')).min(1, 'Please enter at least one email to share')
+})
+
 export const WorkspaceItem: React.FC<WorkspaceItemProps> = ({
   workspace,
   showAction,
@@ -24,15 +39,54 @@ export const WorkspaceItem: React.FC<WorkspaceItemProps> = ({
   setOpen
 }) => {
   const navigate = useNavigate()
+  const { value: openModalShare, toggle: setOpenModalShare } = useBoolean(false)
+  const { value: confirmLoading, toggle: setConfirmLoading } = useBoolean(false)
+
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    formState: { errors }
+  } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      emails: []
+    }
+  })
+
+  const { mutate } = useMutation({
+    mutationFn: workspaceSharingApi.create,
+    onSuccess: () => {
+      setOpenModalShare()
+      message.success('Save account successful!')
+    },
+    onError: (e) => {
+      message.error(e.message)
+    }
+  })
+
+  const onSubmit = (data: IWorkspaceShareData) => {
+    setConfirmLoading()
+    setTimeout(() => {
+      setConfirmLoading()
+    }, 2000)
+    mutate(data)
+  }
+  const handleCancel = () => {
+    setOpenModalShare()
+  }
+
   const onActionWorkspaceClick = (key: string, workspace: IWorkspaceData) => {
     if (key === 'edit') {
-      console.log(workspace)
       navigate('/edit-workspace', {
         state: { workspace }
       })
     } else if (key === 'delete') {
       setOpen()
       setDeleteWorkspaceId(workspace.id)
+    } else if (key === 'share') {
+      setOpenModalShare()
+      setValue('workspaceId', workspace.id)
     }
   }
 
@@ -45,7 +99,7 @@ export const WorkspaceItem: React.FC<WorkspaceItemProps> = ({
           Share
         </span>
       ),
-      onClick: () => onActionWorkspaceClick('edit', workspace)
+      onClick: () => onActionWorkspaceClick('share', workspace)
     },
     {
       key: 'edit',
@@ -68,11 +122,42 @@ export const WorkspaceItem: React.FC<WorkspaceItemProps> = ({
       onClick: () => onActionWorkspaceClick('delete', workspace)
     }
   ]
+
   return (
     <li
       key={workspace.id}
       className='flex justify-between items-center p-2 hover:cursor-pointer hover:bg-slate-100 group'
     >
+      <Modal
+        title='Share workspace'
+        open={openModalShare}
+        onOk={handleSubmit(onSubmit)}
+        okText='Share'
+        cancelText='Close'
+        confirmLoading={confirmLoading}
+        onCancel={handleCancel}
+      >
+        <Form.Item
+          label='Emails'
+          validateStatus={errors.emails ? 'error' : ''}
+          help={errors.emails && errors?.emails[0]?.message}
+        >
+          <Controller
+            name='emails'
+            control={control}
+            render={({ field }) => (
+              <Select
+                {...field}
+                mode='tags'
+                className='w-full'
+                placeholder='Type email and press Enter'
+                tokenSeparators={[',', ' ']}
+              />
+            )}
+          />
+        </Form.Item>
+      </Modal>
+
       <div className='flex items-center flex-1' onClick={() => setAccessWorkspace(workspace)}>
         <span className='text-3xl mr-1'>
           <MdFolder color='#ffd100e8' />

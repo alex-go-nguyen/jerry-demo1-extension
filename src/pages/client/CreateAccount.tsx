@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -24,6 +24,8 @@ const createAccountSchema = yup.object().shape({
 })
 
 export function CreateAccount() {
+  const queryClient = useQueryClient()
+
   const [currentDomain, setCurrentDomain] = useState('')
 
   useEffect(() => {
@@ -53,6 +55,7 @@ export function CreateAccount() {
     mutationFn: accountApi.create,
     onSuccess: () => {
       reset()
+      queryClient.invalidateQueries({ queryKey: ['accounts'] })
       message.success('Save account successful!')
     },
     onError: (e) => {
