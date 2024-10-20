@@ -1,12 +1,19 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}', './stories/**/*.stories.{js,jsx,ts,tsx}'],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'sans-serif']
+      },
       colors: {
         'primary-800': '#0A2FB6',
         'primary-500': '#365ff5',
         'blue-antd': '#4096ff'
+      },
+      boxShadow: {
+        custom: '0 0 0 1px #0A2FB6',
+        error: '0 0 0 1px #ff4d4f'
       },
       backgroundImage: {
         'radial-custom':

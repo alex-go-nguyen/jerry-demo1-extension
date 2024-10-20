@@ -94,7 +94,7 @@ export const WorkspaceItem: React.FC<WorkspaceItemProps> = ({
     {
       key: 'share',
       label: (
-        <span className='flex items-center text-blue-500'>
+        <span className='flex items-center text-slate-700 text-lg font-normal'>
           <PiShareFat className='mr-2' />
           Share
         </span>
@@ -104,7 +104,7 @@ export const WorkspaceItem: React.FC<WorkspaceItemProps> = ({
     {
       key: 'edit',
       label: (
-        <span className='flex items-center text-green-500'>
+        <span className='flex items-center text-slate-700 text-lg font-normal'>
           <GrEdit className='mr-2' />
           Edit
         </span>
@@ -114,7 +114,7 @@ export const WorkspaceItem: React.FC<WorkspaceItemProps> = ({
     {
       key: 'delete',
       label: (
-        <span className='flex items-center text-red-500'>
+        <span className='flex items-center text-red-500 text-lg font-normal'>
           <TbTrash className='mr-2' />
           Delete
         </span>
@@ -162,7 +162,7 @@ export const WorkspaceItem: React.FC<WorkspaceItemProps> = ({
         <span className='text-3xl mr-1'>
           <MdFolder color='#ffd100e8' />
         </span>
-        <span className='text-gray-700 text-lg group-hover:text-primary-500 group-hover:underline'>
+        <span className='text-slate-700 text-lg font-medium group-hover:text-primary-500 group-hover:underline'>
           {workspace.name} ({workspace?.accounts?.length})
         </span>
       </div>

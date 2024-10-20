@@ -28,7 +28,7 @@ window.addEventListener('load', function () {
     position: absolute; 
     display: none;
     width: 100vw;
-    height: 330px;
+    height: 387px;
     max-height: 400px;
     z-index: 2147483647;
     border-radius: 4px;
@@ -153,7 +153,7 @@ window.addEventListener('load', function () {
     showMoreOptions: () => updateHeight('193px'),
     showModalGeneratePassword: () => updateHeight('400px'),
     clickLoadMore: () => updateHeight('360px'),
-    hideLoadMore: () => updateHeight('300px'),
+    hideLoadMore: () => updateHeight('326px'),
     noShowMoreOptions: () => updateHeight('330px')
   }
 

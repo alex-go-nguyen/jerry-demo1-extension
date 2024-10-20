@@ -1,11 +1,12 @@
 import * as CryptoJS from 'crypto-js'
+import { environmentConfig } from '../constant'
 
 export const decryptPassword = (encryptedPassword: string): string => {
   const decrypted = CryptoJS.AES.decrypt(
     encryptedPassword,
-    CryptoJS.enc.Utf8.parse(import.meta.env.VITE_ENCRYPTION_KEY),
+    CryptoJS.enc.Utf8.parse(environmentConfig.encryptionKey),
     {
-      iv: CryptoJS.enc.Utf8.parse(import.meta.env.VITE_ENCRYPTION_IV),
+      iv: CryptoJS.enc.Utf8.parse(environmentConfig.encryptionKeyIV),
       mode: CryptoJS.mode.CBC,
       padding: CryptoJS.pad.Pkcs7
     }
