@@ -105,16 +105,24 @@ export const accountFields = [
   {
     label: 'Domain',
     name: 'domain',
-    placeholder: 'Enter domain name',
+    type: 'text',
+    placeholder: 'domainPlaceholder'
   },
   {
     label: 'Credential',
     name: 'username',
-    placeholder: 'Enter your credential',
+    type: 'text',
+    placeholder: 'credentialPlaceholder'
   },
   {
     label: 'Password',
     name: 'password',
-    placeholder: 'Enter your password',
+    type: 'password',
+    placeholder: 'passwordPlaceholder'
   }
 ]
+
+export const languages = {
+  en: { nativeName: 'English' },
+  vi: { nativeName: 'Vietnamese' }
+}

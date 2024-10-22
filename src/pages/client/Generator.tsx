@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react'
 
+import { useTranslation } from 'react-i18next'
+
 import { Checkbox, Layout, message, Slider, Tooltip } from 'antd'
 
 import generator from 'generate-password-ts'
 
 import { useCopyToClipboard } from '@/hooks'
 
-import { FaCopy, LuRefreshCw } from '@/utils/common'
 import { passwordSettingOptions } from '@/utils/constant'
+import { FaCopy, LuRefreshCw, VscGitStashApply } from '@/utils/common'
 
 const { Header } = Layout
 
@@ -22,12 +24,11 @@ const passwordTemp = generator.generate({
   uppercase: true
 })
 
-export function Generator({ isShowHeader = true }) {
+export function Generator({ isShowHeader = true, isShowCopy = true }) {
+  const { t } = useTranslation()
   const [, copy] = useCopyToClipboard()
   const [password, setPassword] = useState<string>(passwordTemp)
-
   const [disablePasswordSetting, setDisablePasswordSetting] = useState<string>('')
-
   const [passwordSettings, setPasswordSettings] = useState<PasswordSettings>({
     length: 50,
     numbers: true,
@@ -39,12 +40,13 @@ export function Generator({ isShowHeader = true }) {
   const handleCopyPasswordToClipboard = () => {
     copy(password)
       .then(() => {
-        message.success('Copied password')
+        message.success(t('generator.copySuccess'))
       })
       .catch((error) => {
-        message.success('Copy password failed' + error)
+        message.error(t('generator.copyFailed', { error }))
       })
   }
+
   const handleGeneratePassword = () => {
     const { length, numbers, symbols, lowercase, uppercase } = passwordSettings
     const newPassword = generator.generate({
@@ -71,6 +73,13 @@ export function Generator({ isShowHeader = true }) {
     setPasswordSettings({ length, ...updatedSettings })
   }
 
+  const handleFillPasswordToInputField = () => {
+    chrome.runtime.sendMessage({
+      action: 'fillPassword',
+      password: password
+    })
+  }
+
   useEffect(() => {
     handleGeneratePassword()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -80,7 +89,7 @@ export function Generator({ isShowHeader = true }) {
     <div>
       {isShowHeader && (
         <Header className='text-left capitalize text-white font-semibold text-xl leading-[64px] bg-primary-800 px-3'>
-          Password Generator
+          {t('generator.passwordGenerator')}
         </Header>
       )}
 
@@ -88,13 +97,23 @@ export function Generator({ isShowHeader = true }) {
         <div className='flex justify-between items-center border-2 border-slate-200 px-3 py-2'>
           <p className='text-slate-800 text-lg text-left truncate'>{password}</p>
           <div className='flex'>
-            <Tooltip title='copy' color='blue'>
-              <FaCopy
-                className='mr-3 text-primary-500 text-lg cursor-pointer'
-                onClick={handleCopyPasswordToClipboard}
-              />
-            </Tooltip>
-            <Tooltip title='refresh' color='blue'>
+            {isShowCopy ? (
+              <Tooltip title={t('generator.copy')} color='blue'>
+                <FaCopy
+                  className='mr-3 text-primary-500 text-lg cursor-pointer'
+                  onClick={handleCopyPasswordToClipboard}
+                />
+              </Tooltip>
+            ) : (
+              <Tooltip title={t('generator.fill')} color='blue'>
+                <VscGitStashApply
+                  className='mr-3 text-primary-500 text-lg cursor-pointer'
+                  onClick={handleFillPasswordToInputField}
+                />
+              </Tooltip>
+            )}
+
+            <Tooltip title={t('generator.refresh')} color='blue'>
               <LuRefreshCw className='text-primary-500 text-lg cursor-pointer' onClick={handleGeneratePassword} />
             </Tooltip>
           </div>
@@ -102,8 +121,8 @@ export function Generator({ isShowHeader = true }) {
 
         <div className='mt-5'>
           <div className='flex justify-between'>
-            <p className='text-slate-800 text-xl text-left'>Password length</p>
-            <p className='text-slate-800 text-lg text-right'>{passwordSettings.length}</p>
+            <span className='text-slate-800 text-xl text-left'>{t('generator.passwordLength')}</span>
+            <span className='text-slate-800 text-lg text-right'>{passwordSettings.length}</span>
           </div>
           <Slider
             min={8}
@@ -114,8 +133,8 @@ export function Generator({ isShowHeader = true }) {
         </div>
 
         <div className='flex flex-col mt-5'>
-          <p className='text-slate-800 0 text-xl text-left mb-2'>Password settings</p>
-          {passwordSettingOptions.map(({ key, text }) => (
+          <p className='text-slate-800 text-xl text-left mb-2'>{t('generator.passwordSettings')}</p>
+          {passwordSettingOptions.map(({ key }) => (
             <Checkbox
               key={key}
               disabled={disablePasswordSetting === key}
@@ -123,7 +142,7 @@ export function Generator({ isShowHeader = true }) {
               checked={!!passwordSettings[key as keyof PasswordSettings]}
               onChange={(e) => handleChangePasswordSetting(key as keyof PasswordSettings, e.target.checked)}
             >
-              {text}
+              {t(`generator.${key}`)}
             </Checkbox>
           ))}
         </div>

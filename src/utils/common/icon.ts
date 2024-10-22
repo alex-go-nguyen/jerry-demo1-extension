@@ -25,6 +25,8 @@ import { BsPersonWorkspace } from 'react-icons/bs'
 import { MdFolder } from 'react-icons/md'
 import { MdAdd } from 'react-icons/md'
 import { PiShareFat } from 'react-icons/pi'
+import { VscGitStashApply } from 'react-icons/vsc'
+import { MdCheck } from 'react-icons/md'
 export {
   IoHome,
   TbShieldLockFilled,
@@ -52,5 +54,7 @@ export {
   BsPersonWorkspace,
   MdFolder,
   MdAdd,
-  PiShareFat
+  PiShareFat,
+  VscGitStashApply,
+  MdCheck
 }

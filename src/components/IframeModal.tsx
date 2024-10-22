@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 
+import { useTranslation } from 'react-i18next'
+
 import { useQuery } from '@tanstack/react-query'
 
 import { useBoolean } from '@/hooks'
@@ -10,13 +12,14 @@ import { accountService } from '@/services'
 
 import { IAccountInputData } from '@/interfaces'
 
-import { AiFillLock, HiPencilSquare, IoIosArrowBack, IoIosAddCircle, decryptPassword } from '@/utils/common'
-
 import { listMoreOptions } from '@/utils/constant'
+import { AiFillLock, HiPencilSquare, IoIosArrowBack, IoIosAddCircle, decryptPassword } from '@/utils/common'
 
 import { CustomInput } from './CustomInput'
 
 export function IframeModal() {
+  const { t } = useTranslation()
+
   const { data: listAccounts } = useQuery({
     queryKey: ['accounts'],
     queryFn: async () => {
@@ -29,6 +32,7 @@ export function IframeModal() {
 
   const [currentUrl, setCurrentUrl] = useState<string>('')
   const [limitAccount, setLimitAccount] = useState<number>(3)
+  const [listAccountOfDomain, setListAccountOfDomain] = useState<IAccountInputData[]>([])
   const [listSuggestAccounts, setListSuggestAccounts] = useState<IAccountInputData[]>([])
 
   useEffect(() => {
@@ -44,18 +48,40 @@ export function IframeModal() {
     const listSuggestAccounts = listAccounts?.filter((account: IAccountInputData) =>
       account.domain.includes(currentUrl)
     )
+    if (listSuggestAccounts?.length < 4) {
+      chrome.runtime.sendMessage({
+        action: 'updateHeight',
+        height: `${(listSuggestAccounts?.length || 1) * 68 + 66}px`
+      })
+    } else {
+      chrome.runtime.sendMessage({
+        action: 'updateHeight',
+        height: `${(limitAccount === listSuggestAccounts?.length ? 2.2 : 3) * 68 + 66 + 44 + 61}px`
+      })
+    }
     setListSuggestAccounts(listSuggestAccounts)
-  }, [currentUrl, listAccounts])
+    setListAccountOfDomain(listSuggestAccounts)
+  }, [currentUrl, limitAccount, listAccounts])
 
   const handleToggleOptions = () => {
     if (showModalGeneratePassword) {
       setFalse()
-      chrome.runtime.sendMessage({ action: 'showMoreOptions' })
+      chrome.runtime.sendMessage({ action: 'updateHeight', height: '193px' })
     } else {
-      if (showMoreOptions) {
-        chrome.runtime.sendMessage({ action: 'noShowMoreOptions' })
+      if (!showMoreOptions) {
+        chrome.runtime.sendMessage({ action: 'updateHeight', height: '193px' })
       } else {
-        chrome.runtime.sendMessage({ action: 'showMoreOptions' })
+        if (listSuggestAccounts?.length < 4) {
+          chrome.runtime.sendMessage({
+            action: 'updateHeight',
+            height: `${(listSuggestAccounts?.length || 1) * 68 + 66}px`
+          })
+        } else {
+          chrome.runtime.sendMessage({
+            action: 'updateHeight',
+            height: `${(limitAccount === listSuggestAccounts?.length ? 2.2 : 3) * 68 + 66 + 44 + 61}px`
+          })
+        }
       }
       toggleMoreOptions()
     }
@@ -63,7 +89,7 @@ export function IframeModal() {
 
   const handleToggleGeneratePassword = () => {
     toggleModalGeneratePassword()
-    chrome.runtime.sendMessage({ action: 'showModalGeneratePassword' })
+    chrome.runtime.sendMessage({ action: 'updateHeight', height: '400px' })
   }
 
   const handleToggleShowFormCreateAccount = () => {
@@ -78,20 +104,18 @@ export function IframeModal() {
   }
 
   const handleLoadMore = () => {
-    chrome.runtime.sendMessage({ action: 'hideLoadMore' })
+    chrome.runtime.sendMessage({ action: 'updateHeight', height: '326px' })
     setLimitAccount(listSuggestAccounts.length)
   }
   const handleSearchAccount = (inputValue: string) => {
-    if (inputValue) {
+    const inputValueTrimmed = inputValue.trim()
+    if (inputValueTrimmed) {
       const newSuggestAccounts = listSuggestAccounts.filter(
-        (account) => account.domain.includes(inputValue) || account.username.includes(inputValue)
+        (account) => account.domain.includes(inputValueTrimmed) || account.username.includes(inputValueTrimmed)
       )
       setListSuggestAccounts(newSuggestAccounts)
     } else {
-      const listSuggestAccounts = listAccounts?.filter((account: IAccountInputData) =>
-        account.domain.includes(currentUrl)
-      )
-      setListSuggestAccounts(listSuggestAccounts)
+      setListSuggestAccounts(listAccountOfDomain)
     }
   }
   const handleOpenTabEditAccount = (account: IAccountInputData) => () => {
@@ -108,11 +132,11 @@ export function IframeModal() {
             className='flex items-center text-blue-500  text-xl font-bold p-4 border-b border-b-gray-300 transition hover:bg-blue-200 hover:cursor-pointer'
           >
             <IoIosArrowBack className='text-2xl' />
-            <span className='ml-2'>Back</span>
+            <span className='ml-2'>{t('iframeModal.back')}</span>
           </div>
           <div>
             {showModalGeneratePassword ? (
-              <Generator isShowHeader={false} />
+              <Generator isShowHeader={false} isShowCopy={false} />
             ) : (
               <>
                 {listMoreOptions.map((option) => (
@@ -123,7 +147,7 @@ export function IframeModal() {
                   >
                     <div className='flex items-center text-gray-700'>
                       <span className='text-xl'>{option.iconLeft}</span>
-                      <span className='text-lg ml-2'>{option.text}</span>
+                      <span className='text-lg ml-2'>{t(`iframeModal.${option.key}`)}</span>
                     </div>
                     <span className='text-xl'>{option.iconRight}</span>
                   </div>
@@ -134,35 +158,45 @@ export function IframeModal() {
         </>
       ) : (
         <div className='flex flex-col'>
-          <CustomInput
-            name='searchValue'
-            size='large'
-            placeholder='Search account'
-            className='w-full text-lg font-medium m-0 hover:border-primary-800'
-            onChange={(e: { target: { value: string } }) => handleSearchAccount(e.target.value)}
-          />
-          {listSuggestAccounts?.length > 0 ? (
+          {listAccountOfDomain?.length > 3 && (
+            <CustomInput
+              name='searchValue'
+              size='large'
+              placeholder='Search account'
+              className='w-full text-lg font-medium m-0 hover:border-primary-800'
+              onChange={(e: { target: { value: string } }) => handleSearchAccount(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Backspace') return false
+              }}
+            />
+          )}
+          {listSuggestAccounts?.length > 0 && (
             <ul
-              className={`max-h-[215px] shadow-md overflow-x-hidden ${limitAccount > 3 && listSuggestAccounts?.length > 3 && 'overflow-y-scroll'}`}
+              className={`max-h-[215px] overflow-x-hidden ${limitAccount > 3 && listSuggestAccounts?.length > 3 && 'overflow-y-scroll'}`}
             >
               {listSuggestAccounts.slice(0, limitAccount).map((account) => (
                 <li
                   id='header-modal'
                   className='flex justify-between items-center border-t border-t-gray-300 transition hover:bg-blue-200 hover:cursor-pointer group'
                 >
-                  <div className='flex flex-1 items-center p-2' onClick={handleFillAccountToInputField(account)}>
+                  <div
+                    className='flex flex-1 items-center p-2 max-w-[100px]'
+                    onClick={handleFillAccountToInputField(account)}
+                  >
                     <span className='mr-3 cursor-pointer p-1 rounded-sm'>
                       <AiFillLock className='text-primary-800 text-3xl align-middle' />
                     </span>
-                    <div className='relative text-left'>
+                    <div className='relative text-left max-w-[200px]'>
                       <span className='transition-all duration-500 text-base text-slate-600 text-left opacity-100 group-hover:opacity-0 group-hover:transform group-hover:translate-y-2'>
                         {account.domain}
                       </span>
 
                       <span className='absolute top-0 left-0 transition-all duration-500 text-sm font-bold opacity-0 transform -translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 group-hover:text-primary-500'>
-                        Fill
+                        {t('iframeModal.fill')}
                       </span>
-                      <div className='text-left text-lg font-medium text-slate-700'>{account.username}</div>
+                      <div className='text-left text-lg font-medium text-slate-700 overflow-hidden text-ellipsis'>
+                        {account.username}
+                      </div>
                     </div>
                   </div>
                   <div
@@ -174,8 +208,6 @@ export function IframeModal() {
                 </li>
               ))}
             </ul>
-          ) : (
-            <span className='text-slate-700 text-lg text-center'>No account founded</span>
           )}
 
           {limitAccount < listSuggestAccounts?.length && (
@@ -183,7 +215,7 @@ export function IframeModal() {
               className='w-full text-lg text-left p-4 cursor-pointer transition hover:bg-blue-200 border-t border-gray-300'
               onClick={handleLoadMore}
             >
-              Load More
+              {t('iframeModal.loadMore')}
             </button>
           )}
 
@@ -203,9 +235,9 @@ export function IframeModal() {
                   </span>
 
                   <span className='absolute top-0 left-0 transition-all duration-500 text-sm font-bold opacity-0 transform -translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 group-hover:text-primary-500'>
-                    Add
+                    {t('iframeModal.add')}
                   </span>
-                  <div className='text-left text-lg font-medium text-slate-700'>Start typing</div>
+                  <div className='text-left text-lg font-medium text-slate-700'>{t('iframeModal.startTyping')}</div>
                 </div>
               </div>
               <div className='mr-2 p-2 hover:bg-blue-200 transition'>
@@ -218,7 +250,7 @@ export function IframeModal() {
             className='w-full text-lg text-left p-4 cursor-pointer transition hover:bg-blue-200 border-t border-gray-300'
             onClick={handleToggleOptions}
           >
-            More options...
+            {t('iframeModal.moreOptions')}
           </button>
         </div>
       )}

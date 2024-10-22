@@ -1,50 +1,80 @@
-# React + TypeScript + Vite
+# My Extension GoPass
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Welcome to **My Extension GoPass**! This is a ReactJS application designed to show the information and the gopass service. Follow the instructions below to get started with the project.
 
-Currently, two official plugins are available:
+## Table of Contents
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Settings](#settings)
+- [Running the Project](#running-the-project)
+- [Deployment](#deployment)
 
-## Expanding the ESLint configuration
+## Prerequisites
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+Make sure you have the following installed on your machine:
 
-- Configure the top-level `parserOptions` property like this:
+- [Node.js](https://nodejs.org/) (v16 or higher)
+- [npm](https://www.npmjs.com/) (comes with Node.js) or [Yarn](https://classic.yarnpkg.com/)
+- [git](https://git-scm.com/)
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## Installation
+
+1. Clone the repository:
+
+    ```bash
+    git clone https://github.com/alex-go-nguyen/jerry-demo1-extension
+    ```
+
+2. Navigate into the project directory:
+
+    ```bash
+    cd jerry-demo-1-fe
+    ```
+
+3. Install the project dependencies:
+
+    Using npm:
+
+    ```bash
+    npm install
+    ```
+
+    Or using Yarn:
+
+    ```bash
+    yarn install
+    ```
+
+## Settings
+
+At the root of the project, create a .env file and add the following environment variables
+```
+VITE_CLIENT_URL=
+VITE_API_URL=
+VITE_API_URL_REFRESH_TOKEN=
+VITE_ENCRYPTION_KEY=
+VITE_ENCRYPTION_IV=
+VITE_SENTRY_URL =
+
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## Running the Project
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+To start the development server and run the project locally, use the following command:
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+Using npm:
+
+```bash
+npm run dev
 ```
+
+## Add extension to chrome
+
+Using npm:
+
+```bash
+npm run build
+```
+
+After building, you can load the build folder into Chrome by going to [chrome://extensions/](chrome://extensions), enabling Developer Mode, and then using the Load Unpacked option

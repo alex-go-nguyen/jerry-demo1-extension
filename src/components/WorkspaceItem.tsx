@@ -2,6 +2,8 @@ import React from 'react'
 
 import { useNavigate } from 'react-router-dom'
 
+import { useTranslation } from 'react-i18next'
+
 import { useMutation } from '@tanstack/react-query'
 
 import * as Yup from 'yup'
@@ -26,11 +28,6 @@ type WorkspaceItemProps = {
   setOpen: () => void
 }
 
-const schema = Yup.object().shape({
-  workspaceId: Yup.string(),
-  emails: Yup.array().of(Yup.string().email('Invalid email format')).min(1, 'Please enter at least one email to share')
-})
-
 export const WorkspaceItem: React.FC<WorkspaceItemProps> = ({
   workspace,
   showAction,
@@ -38,6 +35,15 @@ export const WorkspaceItem: React.FC<WorkspaceItemProps> = ({
   setDeleteWorkspaceId,
   setOpen
 }) => {
+  const { t } = useTranslation()
+
+  const schema = Yup.object().shape({
+    workspaceId: Yup.string(),
+    emails: Yup.array()
+      .of(Yup.string().email(t('workspaceItem.invalidEmailFormat')))
+      .min(1, t('workspaceItem.enterAtLeastOneEmail'))
+  })
+
   const navigate = useNavigate()
   const { value: openModalShare, toggle: setOpenModalShare } = useBoolean(false)
   const { value: confirmLoading, toggle: setConfirmLoading } = useBoolean(false)
@@ -58,7 +64,7 @@ export const WorkspaceItem: React.FC<WorkspaceItemProps> = ({
     mutationFn: workspaceSharingApi.create,
     onSuccess: () => {
       setOpenModalShare()
-      message.success('Save account successful!')
+      message.success(t('workspaceItem.saveSuccess'))
     },
     onError: (e) => {
       message.error(e.message)
@@ -72,6 +78,7 @@ export const WorkspaceItem: React.FC<WorkspaceItemProps> = ({
     }, 2000)
     mutate(data)
   }
+
   const handleCancel = () => {
     setOpenModalShare()
   }
@@ -96,7 +103,7 @@ export const WorkspaceItem: React.FC<WorkspaceItemProps> = ({
       label: (
         <span className='flex items-center text-slate-700 text-lg font-normal'>
           <PiShareFat className='mr-2' />
-          Share
+          {t('workspaceItem.share')} 
         </span>
       ),
       onClick: () => onActionWorkspaceClick('share', workspace)
@@ -106,7 +113,7 @@ export const WorkspaceItem: React.FC<WorkspaceItemProps> = ({
       label: (
         <span className='flex items-center text-slate-700 text-lg font-normal'>
           <GrEdit className='mr-2' />
-          Edit
+          {t('workspaceItem.edit')}
         </span>
       ),
       onClick: () => onActionWorkspaceClick('edit', workspace)
@@ -116,7 +123,7 @@ export const WorkspaceItem: React.FC<WorkspaceItemProps> = ({
       label: (
         <span className='flex items-center text-red-500 text-lg font-normal'>
           <TbTrash className='mr-2' />
-          Delete
+          {t('workspaceItem.delete')}
         </span>
       ),
       onClick: () => onActionWorkspaceClick('delete', workspace)
@@ -129,16 +136,16 @@ export const WorkspaceItem: React.FC<WorkspaceItemProps> = ({
       className='flex justify-between items-center p-2 hover:cursor-pointer hover:bg-slate-100 group'
     >
       <Modal
-        title='Share workspace'
+        title={t('workspaceItem.shareWorkspace')}
         open={openModalShare}
         onOk={handleSubmit(onSubmit)}
-        okText='Share'
-        cancelText='Close'
+        okText={t('workspaceItem.share')} 
+        cancelText={t('workspaceItem.close')}
         confirmLoading={confirmLoading}
         onCancel={handleCancel}
       >
         <Form.Item
-          label='Emails'
+          label={t('workspaceItem.emails')}
           validateStatus={errors.emails ? 'error' : ''}
           help={errors.emails && errors?.emails[0]?.message}
         >
@@ -150,7 +157,7 @@ export const WorkspaceItem: React.FC<WorkspaceItemProps> = ({
                 {...field}
                 mode='tags'
                 className='w-full'
-                placeholder='Type email and press Enter'
+                placeholder={t('workspaceItem.emailPlaceholder')}
                 tokenSeparators={[',', ' ']}
               />
             )}
