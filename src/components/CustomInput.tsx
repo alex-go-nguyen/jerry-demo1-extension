@@ -11,7 +11,9 @@ type CustomInputProps = {
   placeholder: string
   size: 'large' | 'middle' | 'small'
   className?: string
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void; 
+  type?: string
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void
   prefixIcon?: JSX.Element
 }
 
@@ -24,7 +26,9 @@ export const CustomInput: React.FC<CustomInputProps> = ({
   size = 'small',
   className,
   prefixIcon = null,
+  type = 'text',
   onChange,
+  onKeyDown
 }) => {
   return control ? (
     <Form.Item
@@ -36,15 +40,25 @@ export const CustomInput: React.FC<CustomInputProps> = ({
       <Controller
         name={name}
         control={control}
-        render={({ field }) => (
-          <Input
-            {...field}
-            size={size}
-            placeholder={placeholder}
-            prefix={prefixIcon}
-            className={`text-lg font-medium border-1 border-gray-200 rounded-md hover:border-primary-800 focus-within:!border-primary-800 focus-within:!shadow-custom px-4 py-[9px] ${className}`}
-          />
-        )}
+        render={({ field }) => {
+          return type === 'text' ? (
+            <Input
+              {...field}
+              size={size}
+              placeholder={placeholder}
+              prefix={prefixIcon}
+              className={`text-lg font-medium border-1 border-gray-200 rounded-md hover:border-primary-800 focus-within:!border-primary-800 focus-within:!shadow-custom px-4 py-[9px] ${className}`}
+            />
+          ) : (
+            <Input.Password
+              {...field}
+              size={size}
+              placeholder={placeholder}
+              prefix={prefixIcon}
+              className={`text-lg font-medium border-1 border-gray-200 rounded-md hover:border-primary-800 focus-within:!border-primary-800 focus-within:!shadow-custom px-4 py-[9px] ${className}`}
+            />
+          )
+        }}
       />
     </Form.Item>
   ) : (
@@ -52,6 +66,7 @@ export const CustomInput: React.FC<CustomInputProps> = ({
       name={name}
       size={size}
       onChange={onChange}
+      onKeyDown={onKeyDown}
       placeholder={placeholder}
       className={`text-lg font-medium mr-2 border-1 border-gray-200 rounded-md hover:border-primary-800 focus-within:!border-primary-800 focus-within:!shadow-custom ${className}`}
     />

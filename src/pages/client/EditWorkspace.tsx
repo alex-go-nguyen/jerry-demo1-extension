@@ -18,14 +18,10 @@ import { IAccountInputData, IWorkspaceInputData } from '@/interfaces'
 
 import { CustomBtn, CustomInput } from '@/components'
 
-import { BsPersonWorkspace, IoIosArrowBack } from '@/utils/common'
+import { IoIosArrowBack } from '@/utils/common'
+import { useTranslation } from 'react-i18next'
 
 const { Text } = Typography
-
-const editWorkspaceSchema = yup.object().shape({
-  name: yup.string().required('Please input your workspace!'),
-  accounts: yup.array().min(1, 'Please select at least one account!').required('Please select accounts!')
-})
 
 type accountOption = {
   label: string
@@ -33,6 +29,13 @@ type accountOption = {
 }
 
 export function EditWorkspace() {
+  const { t } = useTranslation()
+
+  const editWorkspaceSchema = yup.object().shape({
+    name: yup.string().required(t('createWorkspace.nameRequired')),
+    accounts: yup.array().required(t('createWorkspace.selectAtleast'))
+  })
+
   const queryClient = useQueryClient()
 
   const location = useLocation()
@@ -65,7 +68,7 @@ export function EditWorkspace() {
     onSuccess: () => {
       handleBack()
       queryClient.invalidateQueries({ queryKey: ['workspaces'] })
-      message.success('Update workspace successful!')
+      message.success(t('editWorkspace.updateSuccess'))
     },
     onError: (e) => {
       message.error(e.message)
@@ -73,6 +76,7 @@ export function EditWorkspace() {
   })
 
   const handleUpdateWorkspace = (data: IWorkspaceInputData) => {
+    console.log('data', data)
     mutate({ ...workspace, ...data })
   }
 
@@ -83,10 +87,12 @@ export function EditWorkspace() {
 
   useEffect(() => {
     setValue('name', workspace?.name)
-    setValue(
-      'accounts',
-      workspace?.accounts?.map((account: { id: string }) => account.id)
-    )
+    if (workspace?.accounts?.length > 0) {
+      setValue(
+        'accounts',
+        workspace?.accounts?.map((account: { id: string }) => account.id)
+      )
+    }
   }, [setValue, workspace])
 
   return (
@@ -95,7 +101,7 @@ export function EditWorkspace() {
         <Button className='p-3 mr-5 gap-0 text-primary-500' onClick={handleBack}>
           <IoIosArrowBack className='text-xl' />
         </Button>
-        <h2 className='text-xl text-primary-500 font-semibold'>Edit your workspace</h2>
+        <h2 className='text-xl text-primary-800 font-semibold'>{t('editWorkspace.title')}</h2>
       </div>
       <Form
         className='bg-white mt-3 p-3 border border-gray-200 text-gray-600'
@@ -104,14 +110,13 @@ export function EditWorkspace() {
         <CustomInput
           name='name'
           size='large'
-          label='Workspace'
+          label={t('createWorkspace.nameLabel')}
           control={control}
           errors={errors}
-          placeholder='Enter workspace name'
-          prefixIcon={<BsPersonWorkspace />}
+          placeholder={t('createWorkspace.namePlaceholder')}
         />
         <div className='flex flex-col mt-3 mb-2 text-left'>
-        <label className='text-lg font-normal text-slate-800'>Choose accounts</label>
+          <label className='text-lg font-normal text-slate-800'>{t('createWorkspace.selectAccountsLabel')}</label>
           <Controller
             name='accounts'
             control={control}
@@ -120,7 +125,7 @@ export function EditWorkspace() {
                 {...field}
                 mode='multiple'
                 style={{ width: '100%' }}
-                placeholder='Select accounts'
+                placeholder={t('createWorkspace.selectAccountsPlaceholder')}
                 className='text-lg '
                 options={accountOptions}
                 onChange={(value) => field.onChange(value)}
@@ -130,7 +135,13 @@ export function EditWorkspace() {
           />
           {errors.accounts && <Text type='danger'>{errors.accounts.message}</Text>}
         </div>
-        <CustomBtn title='Update' type='primary' htmlType='submit' disabled={isPending} loading={isPending} />
+        <CustomBtn
+          title={t('editWorkspace.updateButton')}
+          type='primary'
+          htmlType='submit'
+          disabled={isPending}
+          loading={isPending}
+        />
       </Form>
     </section>
   )

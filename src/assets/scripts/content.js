@@ -1,13 +1,99 @@
-window.addEventListener('load', function () {
-  const createElement = (tag, id, styles, parent = null) => {
+const helperFunction = {
+  createElement: (tag, id, styles, parent = null) => {
     const element = document.createElement(tag)
     if (id) element.id = id
     if (styles) element.style = styles
     if (parent) parent.appendChild(element)
     return element
-  }
+  },
+  handleIconPosition: (modalDiv, icon, passwordField) => {
+    const rect = passwordField.getBoundingClientRect()
+    const iconHeight = 22
+    const top = rect.height / 2 - iconHeight / 2
+    modalDiv.style.left = `${rect.left}px`
+    modalDiv.style.top = `${rect.top + rect.height}px`
+    icon.style.top = `${top}px`
+  },
+  updateIframeDisplay: (translateY) => {
+    const iframe = document.getElementById('go-pass-root').shadowRoot.getElementById('go-pass-form-save-account')
+    if (iframe) {
+      iframe.style.transform = translateY
+      return { status: 'success' }
+    } else {
+      return { status: 'error', message: 'Iframe not found' }
+    }
+  },
+  updateHeight: (height) => {
+    const goPassModalContainer = document
+      .getElementById('go-pass-root')
+      .shadowRoot.getElementById('go-pass-modal-container')
+    if (goPassModalContainer) {
+      goPassModalContainer.style.height = height
+      return { status: 'success' }
+    } else {
+      return { status: 'error', message: 'goPassModalContainer not found' }
+    }
+  },
+  sendRequestConfirmSaveAccount: (credential, password) => {
+    chrome.runtime.sendMessage({ action: 'getCurrentTabUrl' }, (response) => {
+      if (response?.url) {
+        currentUrl = response.url.split('/')[2]
+      }
+    })
+    setTimeout(() => {
+      chrome.runtime.sendMessage({
+        action: 'formSubmit',
+        credential: credential,
+        password: password,
+        domain: currentUrl
+      })
+    }, 3000)
+  },
+  fillAccountToInputFields: (request) => {
+    const { username, password } = request
+    const passwordField = document.querySelector('form input[type="password"]')
+    const formField = document.querySelector('form input[type="password"]').closest('form')
 
-  const goPassRoot = createElement(
+    if (formField) {
+      const credentialField = formField.querySelector('input:not([type="password"])')
+
+      const changeEvent = new Event('change', { bubbles: true })
+
+      credentialField.addEventListener('change', function () {
+        credentialField.value = username
+      })
+
+      passwordField.addEventListener('change', function () {
+        passwordField.value = password
+      })
+
+      credentialField.dispatchEvent(changeEvent)
+      passwordField.dispatchEvent(changeEvent)
+    }
+  },
+  fillPassword: (request) => {
+    const { password } = request
+    document.querySelectorAll('form input[type="password"]').forEach((passwordField) => {
+      if (passwordField) {
+        const changeEvent = new Event('change', { bubbles: true })
+
+        passwordField.addEventListener('change', function () {
+          passwordField.value = password
+        })
+        passwordField.dispatchEvent(changeEvent)
+      }
+    })
+  }
+}
+const actions = {
+  showFormCreateAccountIframe: (request) => helperFunction.updateIframeDisplay('translateY(0px)'),
+  closeFormCreateAccountIframe: (request) => helperFunction.updateIframeDisplay('translateY(-500px)'),
+  updateHeight: (request) => helperFunction.updateHeight(request.height),
+  fillForm: (request) => helperFunction.fillAccountToInputFields(request),
+  fillPassword: (request) => helperFunction.fillPassword(request)
+}
+window.addEventListener('load', async function () {
+  const goPassRoot = helperFunction.createElement(
     'div',
     'go-pass-root',
     `
@@ -21,7 +107,7 @@ window.addEventListener('load', function () {
   )
   const goPassShadowRoot = goPassRoot.attachShadow({ mode: 'open' })
 
-  const modalDiv = createElement(
+  const modalDiv = helperFunction.createElement(
     'div',
     'go-pass-modal-container',
     `
@@ -40,7 +126,7 @@ window.addEventListener('load', function () {
     goPassShadowRoot
   )
 
-  const modalIframe = createElement(
+  const modalIframe = helperFunction.createElement(
     'iframe',
     'go-pass-modal-option',
     `
@@ -53,12 +139,11 @@ window.addEventListener('load', function () {
   modalIframe.src = chrome.runtime.getURL('index.html#/webclient-infield')
   modalIframe.allow = 'clipboard-write'
 
-  const formSaveAccount = createElement(
+  const formSaveAccount = helperFunction.createElement(
     'iframe',
     'go-pass-form-save-account',
     `
     position: fixed;
-    display: none;
     top: 0px;
     right: 0px;
     z-index: 2147483647;
@@ -67,54 +152,56 @@ window.addEventListener('load', function () {
     width: 100vw;
     max-height: 500px;
     max-width: 430px;
+    transform: translateY(-500px);
+    transition: transform 600ms cubic-bezier(0.2, 1.35, 0.7, 0.95);
   `,
     goPassShadowRoot
   )
   formSaveAccount.src = chrome.runtime.getURL('index.html#/create-account')
-
-  const handleIconPosition = (icon, passwordField) => {
-    const rect = passwordField.getBoundingClientRect()
-    const computedStyles = window.getComputedStyle(passwordField)
-    const iconWidth = 22,
-      iconHeight = 22
-    const paddingRight = parseFloat(computedStyles.paddingRight) || 0
-    const marginRight = parseFloat(computedStyles.marginRight) || 0
-    const top = rect.height / 2 - iconHeight / 2
-    const left =
-      rect.width < 300 ? rect.width - iconWidth - paddingRight - marginRight - 5 : rect.width - iconWidth - rect.left
-    modalDiv.style.left = `${rect.left}px`
-
-    modalDiv.style.top = `${rect.top + rect.height}px`
-    icon.style.top = `${top}px`
-    icon.style.left = `${left}px`
-  }
-
-  document.querySelectorAll('form input[type="password"]').forEach((passwordField) => {
-    const parentNode = passwordField.parentNode
-    const goPassIconRoot = createElement(
-      'div',
-      'go-pass-icon-root',
-      `
-      position: relative !important; height: 0px !important; width: 0px !important; float: left !important;
+  const goPassIconRoot = helperFunction.createElement(
+    'div',
+    'go-pass-icon-root',
     `
-    )
+      position: relative !important; height: 0px !important; width: 0px !important; float: right !important;
+    `
+  )
 
-    const goPassIconRootShadow = goPassIconRoot.attachShadow({ mode: 'open' })
+  const goPassIconRootShadow = goPassIconRoot.attachShadow({ mode: 'open' })
 
-    if (parentNode && parentNode.contains(passwordField)) {
-      parentNode.insertBefore(goPassIconRoot, passwordField.nextSibling)
+  const passwordFields = this.document.querySelectorAll('input[type="password"]')
+  if (passwordFields) {
+    const lastPasswordField = passwordFields[passwordFields.length - 1]
+
+    if (lastPasswordField) {
+      const formField = lastPasswordField.closest('form')
+
+      if (formField) {
+        formField.addEventListener('submit', (e) => {
+          const credentialField = formField.querySelector(
+            'input:not([type="password"]):not([type="hidden"]):not([type="checkbox"]):not([type="radio"])'
+          )
+          helperFunction.sendRequestConfirmSaveAccount(credentialField.value, lastPasswordField.value)
+          const authData = {
+            credential: credentialField.value,
+            password: lastPasswordField.value
+          }
+          this.chrome.storage.local.set({ authData: authData })
+        })
+      }
+      const parentNode = lastPasswordField.parentElement
+      parentNode.insertBefore(goPassIconRoot, lastPasswordField.nextSibling)
     }
 
-    const icon = createElement(
+    const icon = helperFunction.createElement(
       'img',
       null,
       `
-      position: absolute; cursor: pointer; height: 22px; width: 22px; z-index: auto;
-    `,
+        position: absolute; cursor: pointer; height: 22px; width: 22px; z-index: auto;
+      `,
       goPassIconRootShadow
     )
     icon.src = chrome.runtime.getURL('icons/icon48.png')
-
+    icon.style.left = '-40px'
     icon.addEventListener('click', () => {
       chrome.storage.local.get('accessToken', (result) => {
         if (result.accessToken) {
@@ -133,76 +220,26 @@ window.addEventListener('load', function () {
         }
       })
     })
-    handleIconPosition(icon, passwordField)
-    window.addEventListener('resize', () => handleIconPosition(icon, passwordField))
-  })
-
-  const updateIframeDisplay = (action, display) => {
-    const iframe = document.getElementById('go-pass-root').shadowRoot.getElementById(action)
-    if (iframe) {
-      iframe.style.display = display
-      return { status: 'success' }
-    } else {
-      return { status: 'error', message: 'Iframe not found' }
+    if (lastPasswordField) {
+      helperFunction.handleIconPosition(modalDiv, icon, lastPasswordField)
+      window.addEventListener('resize', () => helperFunction.handleIconPosition(modalDiv, icon, lastPasswordField))
     }
   }
-
-  const actions = {
-    showFormCreateAccountIframe: () => updateIframeDisplay('go-pass-form-save-account', 'block'),
-    closeFormCreateAccountIframe: () => updateIframeDisplay('go-pass-form-save-account', 'none'),
-    showMoreOptions: () => updateHeight('193px'),
-    showModalGeneratePassword: () => updateHeight('400px'),
-    clickLoadMore: () => updateHeight('360px'),
-    hideLoadMore: () => updateHeight('326px'),
-    noShowMoreOptions: () => updateHeight('330px')
+  const response = await this.chrome.storage.local.get('authData')
+  if (response && response?.authData) {
+    helperFunction.sendRequestConfirmSaveAccount(response?.authData.credential, response?.authData.password)
+    this.chrome.storage.local.remove('authData')
   }
-
-  const updateHeight = (height) => {
-    const goPassModalContainer = document
-      .getElementById('go-pass-root')
-      .shadowRoot.getElementById('go-pass-modal-container')
-    if (goPassModalContainer) {
-      goPassModalContainer.style.height = height
-      return { status: 'success' }
-    } else {
-      return { status: 'error', message: 'goPassModalContainer not found' }
-    }
-  }
-
-  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    const actionHandler =
-      actions[message.action] ||
-      (() => {
-        const goPassModalContainer = document
-          .getElementById('go-pass-root')
-          .shadowRoot.getElementById('go-pass-modal-container')
-        if (goPassModalContainer) goPassModalContainer.style.display = 'none'
-      })
-    sendResponse(actionHandler())
-    return true
-  })
 })
-
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === 'fillForm') {
-    const { username, password } = message
-    const passwordField = document.querySelector('form input[type="password"]')
-    const usernameField = document
-      .querySelector('form input[type="password"]')
-      .closest('form')
-      .querySelector('input[type="text"]')
-    usernameField.value = username
-    passwordField.value = password
-  }
-  sendResponse({ status: 'success' })
+  const actionHandler =
+    actions[message.action] ||
+    (() => {
+      const goPassModalContainer = document
+        .getElementById('go-pass-root')
+        .shadowRoot.getElementById('go-pass-modal-container')
+      if (goPassModalContainer) goPassModalContainer.style.display = 'none'
+    })
+  sendResponse(actionHandler(message))
   return true
-})
-
-document.addEventListener('DOMContentLoaded', function () {
-  const rootContainIframe = this.document.getElementById('root')
-
-  if (rootContainIframe) {
-    const bodyTag = rootContainIframe.parentElement
-    bodyTag.style.overflowY = 'hidden'
-  }
 })

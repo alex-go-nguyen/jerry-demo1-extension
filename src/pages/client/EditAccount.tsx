@@ -2,6 +2,8 @@ import { useEffect } from 'react'
 
 import { useParams } from 'react-router-dom'
 
+import { useTranslation } from 'react-i18next'
+
 import { useMutation, useQuery } from '@tanstack/react-query'
 
 import * as yup from 'yup'
@@ -11,7 +13,6 @@ import { useForm } from 'react-hook-form'
 import { Form, Spin, message } from 'antd'
 
 import { accountService } from '@/services'
-
 import { ICreateAccountData } from '@/interfaces'
 
 import { accountFields } from '@/utils/constant'
@@ -19,20 +20,20 @@ import { decryptPassword, IoMdClose } from '@/utils/common'
 
 import { CustomBtn, CustomInput } from '@/components'
 
-const editAccountSchema = yup.object().shape({
-  username: yup.string().required('Please input your credential!'),
-  password: yup.string().required('Please input your password!').min(8, 'Password needs to be at least 8 characters.'),
-  domain: yup.string().required('Please input domain name!').default('')
-})
-
 export function EditAccount() {
+  const { t } = useTranslation()
+  const editAccountSchema = yup.object().shape({
+    username: yup.string().required(t('editAccount.usernameRequire')),
+    password: yup.string().required(t('editAccount.passwordRequire')),
+    domain: yup.string().required(t('domainRequire')).default('')
+  })
   const { accountId } = useParams()
   const {
     control,
     handleSubmit,
     reset,
     setValue,
-    formState: { errors }
+    formState: { errors, isDirty }
   } = useForm({
     resolver: yupResolver(editAccountSchema)
   })
@@ -54,10 +55,9 @@ export function EditAccount() {
     mutationFn: accountService.update,
     onSuccess: () => {
       reset()
-      message.success('Update account successful!')
+      message.success(t('editAccount.updateSuccess'))
     },
     onError: (e) => {
-      chrome.storage.local.clear()
       message.error(e.message)
     }
   })
@@ -66,7 +66,7 @@ export function EditAccount() {
     if (accountId) {
       mutate({ accountId, ...data })
     } else {
-      message.error('Cannot find account id')
+      message.error(t('editAccount.errorAccountId'))
     }
   }
 
@@ -83,10 +83,10 @@ export function EditAccount() {
     <section className='flex h-screen'>
       <div className='relative flex flex-col box-border min-h-[188px] border border-[#d5d9de] m-auto rounded-[4px] shadow-[0_3px_9px_rgba(0,0,0,0.3)] w-2/5 min-w-[420px] bg-[#f7f9fc] p-4'>
         <div className='flex justify-between items-center'>
-          <h2 className='text-xl text-primary-800 font-semibold'>Edit Account</h2>
-          <span className='hover:bg-red-100 cursor-pointer' id='edit-account-form-close' onClick={handleCloseForm}>
-            <IoMdClose className='text-3xl text-red-500 font-semibold ' />
-          </span>
+          <h2 className='text-xl text-primary-800 font-semibold'>{t('editAccount.title')}</h2>
+          <button className='hover:bg-gray-300 cursor-pointer' id='edit-account-form-close' onClick={handleCloseForm}>
+            <IoMdClose className='text-3xl text-gray-600 font-semibold ' />
+          </button>
         </div>
         {isLoading ? (
           <Spin className='mt-8' />
@@ -101,19 +101,20 @@ export function EditAccount() {
                 key={field.name}
                 name={field.name}
                 size='large'
-                label={field.label}
+                type={field.type}
+                label={t(`createAccount.${field.name}`)}
                 control={control}
                 errors={errors}
-                placeholder={field.placeholder}
+                placeholder={t(`createAccount.${field.placeholder}`)}
               />
             ))}
 
             <CustomBtn
-              title='Save'
+              title={t('editAccount.update')}
               type='primary'
               htmlType='submit'
               className='additional-custom-class'
-              disabled={isPending}
+              disabled={isPending || !isDirty}
               loading={isPending}
             />
           </Form>

@@ -2,6 +2,8 @@ import { useNavigate } from 'react-router-dom'
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
+import { useTranslation } from 'react-i18next'
+
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm, Controller } from 'react-hook-form'
@@ -15,14 +17,9 @@ import { IAccountInputData, IWorkspaceInputData } from '@/interfaces'
 
 import { CustomBtn, CustomInput } from '@/components'
 
-import { BsPersonWorkspace, IoIosArrowBack } from '@/utils/common'
+import { IoIosArrowBack } from '@/utils/common'
 
 const { Text } = Typography
-
-const createWorkspaceSchema = yup.object().shape({
-  name: yup.string().required('Please input your workspace!'),
-  accounts: yup.array().min(1, 'Please select at least one account!').required('Please select accounts!')
-})
 
 type accountOption = {
   label: string
@@ -30,6 +27,13 @@ type accountOption = {
 }
 
 export function CreateWorkspace() {
+  const { t } = useTranslation()
+
+  const createWorkspaceSchema = yup.object().shape({
+    name: yup.string().required(t('createWorkspace.nameRequired')),
+    accounts: yup.array().required(t('createWorkspace.selectAtleast'))
+  })
+
   const queryClient = useQueryClient()
   const navigate = useNavigate()
 
@@ -54,7 +58,7 @@ export function CreateWorkspace() {
     onSuccess: () => {
       reset()
       queryClient.invalidateQueries({ queryKey: ['workspaces'] })
-      message.success('Save account successful!')
+      message.success(t('message.saveSuccess'))
     },
     onError: (e) => {
       message.error(e.message)
@@ -73,13 +77,14 @@ export function CreateWorkspace() {
   const handleBack = () => {
     navigate('/workspace')
   }
+
   return (
     <section className='w-full p-2'>
       <div className='flex items-center'>
         <Button className='p-3 mr-7 gap-0 text-primary-800 border border-primary-800' onClick={handleBack}>
           <IoIosArrowBack className='text-xl' />
         </Button>
-        <h2 className='text-xl text-primary-800 font-semibold'>Create your workspace</h2>
+        <h2 className='text-xl text-primary-800 font-semibold'>{t('createWorkspace.title')}</h2>
       </div>
       <Form
         className='bg-white mt-3 p-3 border border-gray-200 text-gray-600'
@@ -88,14 +93,13 @@ export function CreateWorkspace() {
         <CustomInput
           name='name'
           size='large'
-          label='Workspace'
+          label={t('createWorkspace.nameLabel')}
           control={control}
           errors={errors}
-          placeholder='Enter workspace name'
-          prefixIcon={<BsPersonWorkspace />}
+          placeholder={t('createWorkspace.namePlaceholder')}
         />
         <div className='flex flex-col mt-3 mb-2 text-left'>
-          <label className='text-lg font-normal text-slate-800'>Choose accounts</label>
+          <label className='text-lg font-normal text-slate-800'>{t('createWorkspace.selectAccountsLabel')}</label>
           <Controller
             name='accounts'
             control={control}
@@ -103,7 +107,7 @@ export function CreateWorkspace() {
               <Select
                 {...field}
                 mode='multiple'
-                placeholder='Select accounts'
+                placeholder={t('createWorkspace.selectAccountsPlaceholder')}
                 options={accountOptions}
                 onChange={(value) => field.onChange(value)}
                 filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
@@ -112,7 +116,13 @@ export function CreateWorkspace() {
           />
           {errors.accounts && <Text type='danger'>{errors.accounts.message}</Text>}
         </div>
-        <CustomBtn title='Create' type='primary' htmlType='submit' disabled={isPending} loading={isPending} />
+        <CustomBtn
+          title={t('createWorkspace.createButton')}
+          type='primary'
+          htmlType='submit'
+          disabled={isPending}
+          loading={isPending}
+        />
       </Form>
     </section>
   )

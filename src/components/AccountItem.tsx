@@ -1,8 +1,11 @@
 import React from 'react'
 
+import { useTranslation } from 'react-i18next'
+
 import { Button, Dropdown, MenuProps, message } from 'antd'
 
 import { IAccountInputData } from '@/interfaces'
+
 import { AiFillLock, decryptPassword, FaCopy, GrEdit, TbTrash, TfiMoreAlt } from '@/utils/common'
 
 type AccountItemProps = {
@@ -13,12 +16,14 @@ type AccountItemProps = {
 }
 
 export const AccountItem: React.FC<AccountItemProps> = ({ account, showAction, setOpen, setDeleteAccountId }) => {
+  const { t } = useTranslation() 
+
   const onCopyClick = (key: string, account: IAccountInputData) => {
     if (key === 'username') {
-      message.success('Copy username to clipboard')
+      message.success(t('accountItem.copyUsername') + ' to clipboard')
       navigator.clipboard.writeText(account.username)
     } else if (key === 'password') {
-      message.success('Copy password to clipboard')
+      message.success(t('accountItem.copyPassword') + ' to clipboard')
       navigator.clipboard.writeText(decryptPassword(account.password))
     }
   }
@@ -39,7 +44,7 @@ export const AccountItem: React.FC<AccountItemProps> = ({ account, showAction, s
   const createMenuItems = (account: IAccountInputData): MenuProps['items'] => [
     {
       key: 'username',
-      label: <span className='text-lg font-normal'>Copy username</span>,
+      label: <span className='text-lg font-normal'>{t('accountItem.copyUsername')}</span>,
       onClick: (e) => {
         e.domEvent.stopPropagation()
         onCopyClick('username', account)
@@ -47,7 +52,7 @@ export const AccountItem: React.FC<AccountItemProps> = ({ account, showAction, s
     },
     {
       key: 'password',
-      label: <span className='text-lg font-normal'>Copy password</span>,
+      label: <span className='text-lg font-normal'>{t('accountItem.copyPassword')}</span>,
       onClick: (e) => {
         e.domEvent.stopPropagation()
         onCopyClick('password', account)
@@ -61,7 +66,7 @@ export const AccountItem: React.FC<AccountItemProps> = ({ account, showAction, s
       label: (
         <span className='flex items-center text-slate-700 text-lg font-normal'>
           <GrEdit className='mr-2' />
-          Edit
+          {t('accountItem.edit')}
         </span>
       ),
       onClick: (e) => {
@@ -74,7 +79,7 @@ export const AccountItem: React.FC<AccountItemProps> = ({ account, showAction, s
       label: (
         <span className='flex items-center text-red-500 text-lg font-normal'>
           <TbTrash className='mr-2' />
-          Delete
+          {t('accountItem.delete')}
         </span>
       ),
       onClick: (e) => {
@@ -83,27 +88,29 @@ export const AccountItem: React.FC<AccountItemProps> = ({ account, showAction, s
       }
     }
   ]
+
   const handleOpenSite = (siteUrl: string) => () => {
     window.open(`https://${siteUrl}`)
   }
+
   return (
     <li
       key={account.id}
       className='flex justify-between items-center border-b border-b-gray-300 transition group hover:bg-blue-50 hover:cursor-pointer'
     >
-      <div className='flex flex-1 items-center p-2' onClick={handleOpenSite(account.domain)}>
+      <div className='flex flex-1 items-center p-2 max-w-14' onClick={handleOpenSite(account.domain)}>
         <span className='mr-3 cursor-pointer p-1 rounded-sm'>
           <AiFillLock className='text-primary-800 text-3xl align-middle' />
         </span>
-        <div className='relative text-left'>
+        <div className='relative text-left max-w-48'>
           <span className='transition-all duration-500 text-slate-600 text-left text-base opacity-100 group-hover:opacity-0 group-hover:transform group-hover:translate-y-2'>
             {account.domain}
           </span>
 
           <span className='absolute top-0 left-0 transition-all duration-300 text-base font-bold opacity-0 transform -translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 group-hover:text-primary-500'>
-            Launch
+            {t('accountItem.launch')}
           </span>
-          <div className='text-left text-lg font-medium text-slate-700'>{account.username}</div>
+          <div className='text-left text-lg font-medium text-slate-700 text-ellipsis overflow-hidden'>{account.username}</div>
         </div>
       </div>
       <div className='flex p-2 transition'>
